@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
+import com.lzy.okgo.OkGo;
+
 import butterknife.ButterKnife;
 
 
@@ -94,6 +96,6 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        OkGo.getInstance().cancelTag(this);
     }
 }

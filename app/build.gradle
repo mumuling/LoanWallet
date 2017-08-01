@@ -30,10 +30,10 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'cn.bingoogolapple:bga-banner:2.1.7@aar'//Banner
     compile 'com.classic.common:multiple-status-view:1.3'//一个支持多种状态的自定义View,可以方便的切换到：加载中视图、错误视图、空数据视图、网络异常视图、内容视图。
-    compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.lzy.net:okgo:3.0.4'
-    compile 'com.jakewharton:butterknife:8.7.0'
+    compile 'com.google.code.gson:gson:2.8.0'//json解析
+    compile 'com.github.bumptech.glide:glide:3.7.0'//图片加载
+    compile 'com.lzy.net:okgo:3.0.4'//网络请求
+    compile 'com.jakewharton:butterknife:8.7.0'//注解
     compile 'com.orhanobut:logger:1.15' //Log工具库
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.12'//万能adapter
     testCompile 'junit:junit:4.12'

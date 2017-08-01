@@ -22,12 +22,20 @@ import butterknife.OnClick;
 public class MainActivity extends BaseActivity {
 
 
-    @BindView(R.id.main_framelayout) FrameLayout mMainFramelayout;
-    @BindView(R.id.main_rb_1) RadioButton mMainRb1;//产品大全
-    @BindView(R.id.main_rb_2) RadioButton mMainRb2;//精准
-    @BindView(R.id.main_rb_3) RadioButton mMainRb3;//信用卡
-    @BindView(R.id.main_rb_4) RadioButton mMainRb4;//我的
-    @BindView(R.id.main_rg) RadioGroup mMainRg;
+    @BindView(R.id.main_framelayout)
+    FrameLayout mMainFramelayout;
+    @BindView(R.id.main_rb_1)
+    RadioButton mMainRb1;//产品大全
+    @BindView(R.id.main_rb_2)
+    RadioButton mMainRb2;//精准
+    @BindView(R.id.main_rb_3)
+    RadioButton mMainRb3;//信用卡
+    @BindView(R.id.main_rb_4)
+    RadioButton mMainRb4;//我的
+    @BindView(R.id.main_rg)
+    RadioGroup mMainRg;
+
+
 
     private long exitTime = 0;
     private Fragment1 mFragment1;
@@ -41,6 +49,7 @@ public class MainActivity extends BaseActivity {
     public final static int TAB_TWO = 1;     //精准
     public final static int TAB_THREE = 2;   //信用卡
     public final static int TAB_FOUR = 3;    //我的
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -128,9 +137,6 @@ public class MainActivity extends BaseActivity {
 
     /**
      * 双击退出程序
-
-
-
      *
      * @param keyCode
      * @param event
@@ -140,7 +146,7 @@ public class MainActivity extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
             if (System.currentTimeMillis() - exitTime > 2000) { // 2s内再次选择back键有效
-                ToastUtils.showToast(mApp, "再按一次退出程序");
+                ToastUtils.showToast(me, "再按一次退出程序");
                 exitTime = System.currentTimeMillis();
             } else {
                 closeActivtiy();
@@ -169,8 +175,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
+
+
 }

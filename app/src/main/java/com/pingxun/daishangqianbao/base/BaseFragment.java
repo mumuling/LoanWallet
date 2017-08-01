@@ -1,6 +1,5 @@
 package com.pingxun.daishangqianbao.base;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -8,10 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Toast;
 
+import com.lzy.okgo.OkGo;
+
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 
 /**
@@ -30,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
     protected App mApp;
     protected BaseActivity mActivity;
     protected boolean mIsLoadedData = false;
-
+    Unbinder unbinder;
 
     @Override
     public void onAttach(Context context) {
@@ -44,8 +45,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mContentView = LayoutInflater.from(mActivity).inflate(getRootLayoutResID(), null);
-        ButterKnife.bind(this, mContentView);
-
+        unbinder = ButterKnife.bind(this, mContentView);
         initData();
         return mContentView;
     }
@@ -121,34 +121,18 @@ public abstract class BaseFragment extends Fragment {
     @LayoutRes
     int getRootLayoutResID();
 
-
     /**
      * 处理业务逻辑，状态恢复等操作
      */
     protected abstract void initData();
 
-    private ProgressDialog dialog;
 
-    public void showLoading() {
-        if (dialog != null && dialog.isShowing()) return;
-        dialog = new ProgressDialog(mActivity);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("请求网络中...");
-        dialog.show();
-    }
-
-    public void dismissLoading() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss();
-        }
-    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        unbinder.unbind();
+        OkGo.getInstance().cancelTag(this);
 
     }
 }
