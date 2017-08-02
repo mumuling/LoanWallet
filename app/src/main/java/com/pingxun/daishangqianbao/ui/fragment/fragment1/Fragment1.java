@@ -26,20 +26,27 @@ import cn.bingoogolapple.bgabanner.BGABanner;
  * Created by LH on 2017/7/31.
  * 产品大全主页
  */
-public class Fragment1 extends BaseFragment implements G_api.OnResultHandler,BGABanner.Delegate<ImageView, String>, BGABanner.Adapter<ImageView, String>  {
-    BannerBean mBannerBean;
-    List<BannerBean.DataBean> mBannerlist;
-    private static final int GET_BANNER = 1;
-    private static final int GET_PRODUCT_RECOMMEND=2;
-    private static final int GET_PRODUCT_TYPE=3;
-    private static final int GET_CREDIT_CARD=4;
+public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BGABanner.Delegate<ImageView, String>, BGABanner.Adapter<ImageView, String> {
+    private BannerBean mBannerBean;
+    private List<BannerBean.DataBean> mBannerlist;
     private List<String> imgUrlList = new ArrayList<>();
 
-    @BindView(R.id.banner) BGABanner mBanner;
-    @BindView(R.id.rb_dydk) RadioButton mRbDydk;//抵押贷款
-    @BindView(R.id.rb_gxdk) RadioButton mRbGxdk;//工薪贷款
-    @BindView(R.id.rb_xydk) RadioButton mRbXydk;//信用贷款
-    @BindView(R.id.rb_xesd) RadioButton mRbXesd;//小额速贷
+    private static final int GET_BANNER = 1;
+    private static final int GET_PRODUCT_RECOMMEND = 2;
+    private static final int GET_PRODUCT_TYPE = 3;
+    private static final int GET_CREDIT_CARD = 4;
+
+
+    @BindView(R.id.banner)
+    BGABanner mBanner;//轮播图
+    @BindView(R.id.rb_dydk)
+    RadioButton mRbDydk;//抵押贷款
+    @BindView(R.id.rb_gxdk)
+    RadioButton mRbGxdk;//工薪贷款
+    @BindView(R.id.rb_xydk)
+    RadioButton mRbXydk;//信用贷款
+    @BindView(R.id.rb_xesd)
+    RadioButton mRbXesd;//小额速贷
 
 
     @Override
@@ -52,33 +59,34 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler,BGA
         getBanner();
         getProductRecommend();
         getProductType();
-        postCreditCard();
+        getCreditCard();
     }
 
     /**
      * 信用卡推荐
      */
-    private void postCreditCard() {
+    private void getCreditCard() {
         Map<String, String> params = new HashMap<>();
         params.put("flag", "推荐银行");
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_FINDBANK_BY_POSITION,mActivity,params,GET_CREDIT_CARD);
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_FINDBANK_BY_POSITION, mActivity, params, GET_CREDIT_CARD);
     }
 
     /**
      * 产品分类
      */
     private void getProductType() {
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_TYPE,mActivity,null,GET_PRODUCT_TYPE);
-
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_TYPE, mActivity, null, GET_PRODUCT_TYPE);
     }
+
     /**
      * 获取产品推荐
      */
     private void getProductRecommend() {
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_RECOMMEND,mActivity,null,GET_PRODUCT_RECOMMEND);
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_RECOMMEND, mActivity, null, GET_PRODUCT_RECOMMEND);
     }
+
     /**
-     * 获取通用Banner
+     * 获取Banner
      */
     private void getBanner() {
         Map<String, String> params = new HashMap<>();
@@ -92,7 +100,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler,BGA
         switch (flag) {
             case GET_BANNER://获取Banner
                 mBannerBean = Convert.fromJson(jsonStr, BannerBean.class);
-                if (mBannerBean.isSuccess()) {
+                if (mBannerBean.getCode().equals("000000")) {
                     mBannerlist = mBannerBean.getData();
                     setShowpic();
                 }
@@ -104,11 +112,12 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler,BGA
 //                Logger.json(jsonStr);
                 break;
             case GET_CREDIT_CARD://信用卡推荐
-                Logger.json(jsonStr);
+//                  Logger.json(jsonStr);
                 break;
         }
 
     }
+
 
 
 
@@ -118,15 +127,13 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler,BGA
     }
 
 
-
-
     /**
      * 设置轮播图
      */
     private void setShowpic() {
         for (int i = 0; i < mBannerlist.size(); i++) {
             //获得每张图片的地址
-            String url =  mBannerlist.get(i).getBannerImg();
+            String url = mBannerlist.get(i).getBannerImg();
             imgUrlList.add(i, url);
         }
         mBanner.setData(imgUrlList, null);
