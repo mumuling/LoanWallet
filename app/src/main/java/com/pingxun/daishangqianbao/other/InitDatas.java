@@ -2,9 +2,10 @@ package com.pingxun.daishangqianbao.other;
 
 import android.graphics.Bitmap;
 
-
+import com.pingxun.daishangqianbao.data.F2JobDataBean;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 初始数据
@@ -107,6 +108,19 @@ public class InitDatas {
     public static BigDecimal rateYear;
 
     /**
+     * 日利率
+     */
+    public static BigDecimal rateDay=BigDecimal.ONE;
+
+    /**
+     * 月利率
+     */
+    public static BigDecimal rateMounth;
+    /**
+     * 职业选择缓存数据
+     */
+    public static List<F2JobDataBean.DataBean> jobTypeData;
+    /**
      * 是否已经拉取首页初始化数据
      */
     public static boolean isPullInitData=false;
@@ -127,7 +141,15 @@ public class InitDatas {
 
     public static boolean isLogin=false;
 
-    public static String APP_NAME="DKB";
+    public static String APP_NAME="DSQB";
+    public static String CHANNEL_NO="android";//渠道类型：ios,android,wechat
+
+    public static String ErrorMsg="获取信息失败!";
+
+    //用于bundle传值的key
+    public static String PERIOD="period";
+    public static String DATECYCLE="dateCycle";
+    public static String AMOUNT="amount";
 
     /**
      * 渠道编号

@@ -5,8 +5,12 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.lzy.okgo.OkGo;
+import com.pingxun.daishangqianbao.R;
 
 import butterknife.ButterKnife;
 
@@ -70,19 +74,19 @@ public abstract class BaseActivity extends AppCompatActivity {
      * 初始化头部返回的View
      */
     public void initTopView(String titleStr) {
-//        ImageView back = (ImageView) findViewById(R.id.iv_topview_back);
-//        TextView title = (TextView) findViewById(R.id.tv_topview_title);
-//        if (back != null) {
-//            back.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                  closeActivtiy();
-//                }
-//            });
-//        }
-//        if (title != null) {
-//            title.setText(titleStr);
-//        }
+        ImageView back = (ImageView) findViewById(R.id.iv_topview_back);
+        TextView title = (TextView) findViewById(R.id.tv_topview_title);
+        if (back != null) {
+            back.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                  closeActivtiy();
+                }
+            });
+        }
+        if (title != null) {
+            title.setText(titleStr);
+        }
 
     }
 

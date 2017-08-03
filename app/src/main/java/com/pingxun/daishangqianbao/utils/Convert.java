@@ -9,6 +9,9 @@ import com.google.gson.stream.JsonReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 
+/**
+ * JSON 解析工具类
+ */
 public class Convert {
 
     private static Gson create() {

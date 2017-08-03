@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.lzy.okgo.OkGo;
 
@@ -23,7 +22,7 @@ import butterknife.Unbinder;
  */
 public abstract class BaseFragment extends Fragment {
 
-    protected Toast mToast = null;
+
 
 
     protected View mContentView;
@@ -38,6 +37,7 @@ public abstract class BaseFragment extends Fragment {
         super.onAttach(context);
         TAG = this.getClass().getSimpleName();
         mActivity = (BaseActivity) getActivity();
+
         mApp = App.getInstance();
     }
 

@@ -133,6 +133,7 @@ public class App extends Application {
 //            return true;
 //        }
 //    }
+
     public static App getInstance() {
         if (sInstance==null){
             sInstance=new App();

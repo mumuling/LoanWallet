@@ -45,5 +45,14 @@
         <!--tab未选中状态图标-->
         <attr name="menuUnselectedIcon" format="reference" />
     </declare-styleable>
-
+    <declare-styleable name="wheelview">
+        <attr name="gravity">
+            <enum name="center" value="17"/>
+            <enum name="left" value="3"/>
+            <enum name="right" value="5"/>
+        </attr>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textColorOut" format="color"/>
+        <attr name="textColorCenter" format="color"/>
+    </declare-styleable>
 </resources>

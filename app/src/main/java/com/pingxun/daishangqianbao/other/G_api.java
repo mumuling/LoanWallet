@@ -39,7 +39,7 @@ public class G_api {
     /**
      * 通用get请求
      * @param urlStr URL
-     * @param activity a
+     * @param activity activity
      * @param map 参数
      * @param flag 标识
      */
@@ -62,12 +62,15 @@ public class G_api {
                 });
     }
 
+
+
+
     /**
      * 通用的上传Json字符串post方法
-     * @param urlStr
-     * @param activity
-     * @param jsonObject
-     * @param flag
+     * @param urlStr URL
+     * @param activity activity
+     * @param jsonObject jsonObject
+     * @param flag 标识
      */
     public void upJson(final String urlStr,BaseActivity activity,JSONObject jsonObject,final int flag){
         OkGo.<String>post(urlStr)

@@ -170,8 +170,6 @@ public class SPUtils {
 
     /**
      * 用户登录名
-
-
      */
     public void setUserLoginStr(String login) {
         if (editor != null) {
