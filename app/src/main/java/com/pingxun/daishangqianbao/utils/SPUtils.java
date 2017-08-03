@@ -8,8 +8,6 @@ import java.util.Map;
 /**
  * Created by Administrator on 2015/11/2.
  * 存储用户信息的SharedPreferences实体类
-
-
  */
 public class SPUtils {
 

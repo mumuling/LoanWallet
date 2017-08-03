@@ -5,17 +5,23 @@ import android.app.Application;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
+import com.lzy.okgo.cookie.CookieJarImpl;
+import com.lzy.okgo.cookie.store.DBCookieStore;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.OkHttpClient;
 
 
 /**
  * Created by LH.
+ * Application基类
  */
 public class App extends Application {
     public static double longitude; //经度
@@ -63,22 +69,24 @@ public class App extends Application {
         builder.connectTimeout(CONNECTION_TIMED_OUT, TimeUnit.MILLISECONDS);   //全局的连接超时时间
 
         //自动管理cookie（或者叫session的保持），以下几种任选其一就行
-        //builder.cookieJar(new CookieJarImpl(new SPCookieStore(this)));            //使用sp保持cookie，如果cookie不过期，则一直有效
-//        builder.cookieJar(new CookieJarImpl(new DBCookieStore(this)));              //使用数据库保持cookie，如果cookie不过期，则一直有效
+      //  builder.cookieJar(new CookieJarImpl(new SPCookieStore(this)));            //使用sp保持cookie，如果cookie不过期，则一直有效
+        builder.cookieJar(new CookieJarImpl(new DBCookieStore(this)));              //使用数据库保持cookie，如果cookie不过期，则一直有效
         //builder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));            //使用内存保持cookie，app退出后，cookie消失
 
         //https相关设置，以下几种方案根据需要自己设置
         //方法一：信任所有证书,不安全有风险
-        HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
+         HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
         //方法二：自定义信任规则，校验服务端证书
       //  HttpsUtils.SSLParams sslParams2 = HttpsUtils.getSslSocketFactory(new SafeTrustManager());
         //方法三：使用预埋证书，校验服务端证书（自签名证书）
         //HttpsUtils.SSLParams sslParams3 = HttpsUtils.getSslSocketFactory(getAssets().open("srca.cer"));
         //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
         //HttpsUtils.SSLParams sslParams4 = HttpsUtils.getSslSocketFactory(getAssets().open("xxx.bks"), "123456", getAssets().open("yyy.cer"));
+
         builder.sslSocketFactory(sslParams1.sSLSocketFactory, sslParams1.trustManager);
+
         //配置https的域名匹配规则，详细看demo的初始化介绍，不需要就不要加入，使用不当会导致https握手失败
-      //  builder.hostnameVerifier(new SafeHostnameVerifier());
+        builder.hostnameVerifier(new TrustAnyHostnameVerifier());
 
         // 其他统一的配置
         // 详细说明看GitHub文档：https://github.com/jeasonlzy/
@@ -91,48 +99,6 @@ public class App extends Application {
 //                .addCommonParams(params);                       //全局公共参数
     }
 
-//    /**
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 重要的事情说三遍，以下代码不要直接使用
-//     */
-//    private class SafeTrustManager implements X509TrustManager {
-//        @Override
-//        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-//        }
-//
-//        @Override
-//        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-//            try {
-//                for (X509Certificate certificate : chain) {
-//                    certificate.checkValidity(); //检查证书是否过期，签名是否通过等
-//                }
-//            } catch (Exception e) {
-//                throw new CertificateException(e);
-//            }
-//        }
-//
-//        @Override
-//        public X509Certificate[] getAcceptedIssuers() {
-//            return new X509Certificate[0];
-//        }
-//    }
-//
-//    /**
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 这里只是我谁便写的认证规则，具体每个业务是否需要验证，以及验证规则是什么，请与服务端或者leader确定
-//     * 重要的事情说三遍，以下代码不要直接使用
-//     */
-//    private class SafeHostnameVerifier implements HostnameVerifier {
-//        @Override
-//        public boolean verify(String hostname, SSLSession session) {
-//            //验证主机名是否匹配
-//            //return hostname.equals("server.jeasonlzy.com");
-//            return true;
-//        }
-//    }
 
     public static App getInstance() {
         if (sInstance==null){
@@ -142,6 +108,13 @@ public class App extends Application {
     }
 
 
-
+    /**
+     * 自定义https的域名匹配规则
+     */
+    private static class TrustAnyHostnameVerifier implements HostnameVerifier {
+        public boolean verify(String hostname, SSLSession session) {
+            return true;
+        }
+    }
 
 }

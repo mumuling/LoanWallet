@@ -17,6 +17,9 @@ package com.pingxun.daishangqianbao.data;
 
 import java.io.Serializable;
 
+/**
+ * 暂时没用到
+ */
 public class ServerModel implements Serializable {
     private static final long serialVersionUID = -828322761336296999L;
 

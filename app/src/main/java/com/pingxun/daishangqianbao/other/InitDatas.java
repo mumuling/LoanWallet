@@ -13,6 +13,8 @@ import java.util.List;
 
 public class InitDatas {
 
+
+
     /**
      * 贷款最低金额
      */
@@ -143,13 +145,19 @@ public class InitDatas {
 
     public static String APP_NAME="DSQB";
     public static String CHANNEL_NO="android";//渠道类型：ios,android,wechat
-
     public static String ErrorMsg="获取信息失败!";
+    public static String SP_NAME=APP_NAME+"_UserInfo";//sp文件名
+
+    //用于SP存储用户信息的Key
+    public static String UserPhone=APP_NAME+"_Phone";//用户手机号key
+    public static String UserPw=APP_NAME+"_Pw";//用户验证码(密码)key
+    public static String UserIsLogin=APP_NAME+"_IsLogin";//用户是否登录key
 
     //用于bundle传值的key
     public static String PERIOD="period";
     public static String DATECYCLE="dateCycle";
     public static String AMOUNT="amount";
+    public static String PROUDUCT_ID="id";//产品ID
 
     /**
      * 渠道编号

@@ -3,7 +3,8 @@ package com.pingxun.daishangqianbao.data;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/8/2.
+ * Created by LH on 2017/8/2.
+ * 精准Fragment职业数据源
  */
 
 public class F2JobDataBean {

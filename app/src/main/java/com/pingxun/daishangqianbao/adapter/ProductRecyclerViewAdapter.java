@@ -7,18 +7,19 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.data.ProductListBean;
+import com.pingxun.daishangqianbao.utils.GlideRoundTransform;
 
 import java.util.List;
 
 /**
- * Created by Administrator on 2017-03-08.
+ * Created by Lh on 2017-08-03.
+ * 产品列表adapter
  */
 
+public class ProductRecyclerViewAdapter extends BaseQuickAdapter<ProductListBean.DataBean.ContentBean, BaseViewHolder> {
 
-public class ProductRecycViewAdapter extends BaseQuickAdapter<ProductListBean.DataBean.ContentBean, BaseViewHolder> {
 
-
-    public ProductRecycViewAdapter(int layoutResId, List<ProductListBean.DataBean.ContentBean> dataBeanList) {
+    public ProductRecyclerViewAdapter(int layoutResId, List<ProductListBean.DataBean.ContentBean> dataBeanList) {
         super(layoutResId, dataBeanList);
 
     }
@@ -29,7 +30,7 @@ public class ProductRecycViewAdapter extends BaseQuickAdapter<ProductListBean.Da
           helper.setText(R.id.tv_money_range,newStr("借款额度",String.valueOf(item.getStartAmount()),String.valueOf(item.getEndAmount()),"元"));
           helper.setText(R.id.tv_time_range,newStr("期限范围",String.valueOf(item.getStartPeriod()),String.valueOf(item.getEndPeriod()),item.getPeriodType()));
           helper.setText(R.id.tv_interest_rate,item.getPeriodType()+"利率   "+String.valueOf(item.getServiceRate())+"%");
-          Glide.with(mContext).load(item.getImg()).crossFade().into((ImageView) helper.getView(R.id.iv));
+          Glide.with(mContext).load(item.getImg()).crossFade().transform(new GlideRoundTransform(mContext,10)).into((ImageView) helper.getView(R.id.iv));
     }
 
     public String newStr(String s1,String s2,String s3,String s4){

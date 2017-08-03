@@ -3,7 +3,8 @@ package com.pingxun.daishangqianbao.data;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/8/2.
+ * Created by LH on 2017/8/2.
+ * 产品列表数据源
  */
 
 public class ProductListBean {

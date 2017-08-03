@@ -1,5 +1,6 @@
 package com.pingxun.daishangqianbao.ui.activity.other;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -11,12 +12,13 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pingxun.daishangqianbao.R;
-import com.pingxun.daishangqianbao.adapter.ProductRecycViewAdapter;
+import com.pingxun.daishangqianbao.adapter.ProductRecyclerViewAdapter;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.data.ProductListBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.VerticalItemDecoration;
 
@@ -34,7 +36,7 @@ import rx.functions.Action1;
 
 
 /**
- * 产品超市主页
+ * 产品超市主页列表
  */
 public class ProductListActivity extends BaseActivity implements G_api.OnResultHandler,SwipeRefreshLayout.OnRefreshListener, BaseQuickAdapter.RequestLoadMoreListener {
 
@@ -46,11 +48,11 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     @BindView(R.id.tv_type) TextView mTvType;
     @BindView(R.id.rl_type) RelativeLayout mRlType;//贷款类型选项
     @BindView(R.id.rv) RecyclerView mRv;
-    @BindView(R.id.swipeLayout) SwipeRefreshLayout mSwipeLayout;
+    @BindView(R.id.swipeLayout) SwipeRefreshLayout mSwipeLayout;//android自带刷新控件
 
 
 
-    private ProductRecycViewAdapter mAdapter;
+    private ProductRecyclerViewAdapter mAdapter;
     private ProductListBean mBean;
     private List<ProductListBean.DataBean.ContentBean> mListBean;//产品集合
     private List<ProductListBean.DataBean.SortBean> mSortListBean;//以后会用到
@@ -92,7 +94,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         mRv.addItemDecoration(new VerticalItemDecoration(me, 1));
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
-        mAdapter = new ProductRecycViewAdapter(R.layout.rv_item_product_list,mListBean);
+        mAdapter = new ProductRecyclerViewAdapter(R.layout.rv_item_product_list,mListBean);
 //        mAdapter.setOnLoadMoreListener(this, mRv);
         mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
 
@@ -107,7 +109,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                Bundle bundle=new Bundle();
+                bundle.putString(InitDatas.PROUDUCT_ID,String.valueOf(mListBean.get(position).getId()));
+                ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
             }
         });
 

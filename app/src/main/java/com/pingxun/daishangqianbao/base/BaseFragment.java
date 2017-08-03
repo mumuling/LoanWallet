@@ -15,10 +15,10 @@ import butterknife.Unbinder;
 
 
 /**
- * Created by Jm on 2015/2/6.
+ * Created by LH on 2015/2/6.
  * Fragment基类
  *
- * @author Jm
+ * @author LH
  */
 public abstract class BaseFragment extends Fragment {
 
