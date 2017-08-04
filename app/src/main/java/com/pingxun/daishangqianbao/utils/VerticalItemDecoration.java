@@ -25,7 +25,7 @@ public class VerticalItemDecoration extends RecyclerView.ItemDecoration{
     public VerticalItemDecoration(Context context, int space){
         mDividerHeight= (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,space,context.getResources().getDisplayMetrics());
         mPaint=new Paint();
-        mPaint.setColor(ContextCompat.getColor(context, R.color.blue));
+        mPaint.setColor(ContextCompat.getColor(context, R.color.grey_home));
     }
 
     @Override

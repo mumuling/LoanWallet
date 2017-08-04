@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/MatchWrap"
+                android:background="@drawable/shap_blue"
+                android:paddingTop="20dp">
+
+    <ImageView
+
+        android:id="@+id/iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:background="@mipmap/xydk"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/MatchWrap"
+        android:layout_below="@+id/iv"
+        android:layout_marginTop="20dp"
+        android:background="@color/blue"
+        android:gravity="center"
+        android:padding="2dp"
+        android:text="标题"
+        android:textColor="@color/white"
+        android:textSize="16sp"/>
+
+</RelativeLayout>

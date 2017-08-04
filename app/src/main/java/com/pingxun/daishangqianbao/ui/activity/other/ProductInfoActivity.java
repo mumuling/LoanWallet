@@ -6,15 +6,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.data.ProductInfoBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.GlideRoundTransform;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +55,10 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
     private ProductInfoBean mProductInfoBean;
     private String sId;
     private static final int GET_FIND_BY_ID = 1;//获取产品详情
+    private static final int POST_APPLY=2;//立即申请
+
+    private String mWebUrls;
+    private String mNameStr;
 
     @Override
     protected int getLayoutId() {
@@ -64,7 +72,6 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         if (bundle != null) {
             sId = bundle.getString(InitDatas.PROUDUCT_ID);
             Map<String, String> params = new HashMap<>();
-
             params.put("id", sId);
             G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_ID, this, params, GET_FIND_BY_ID);
         }
@@ -81,8 +88,9 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
                     return;
                 }
                 if (mProductInfoBean.isSuccess()) {
+                    mNameStr = mProductInfoBean.getData().getName();
                     Glide.with(me).load(mProductInfoBean.getData().getDetailImg()).crossFade().transform(new GlideRoundTransform(me, 30)).into(mIvProduct);
-                    mTvTitle.setText(mProductInfoBean.getData().getName());//产品名称
+                    mTvTitle.setText(mNameStr);//产品名称
                     mTvQuota.setText("额度范围   "+initTvQuota(mProductInfoBean.getData().getStartAmount(),mProductInfoBean.getData().getEndAmount()));
                     mTvTime.setText("额度期限   "+mProductInfoBean.getData().getStartPeriod()+"~"+mProductInfoBean.getData().getEndPeriod()+mProductInfoBean.getData().getPeriodTypeStr());
                     mTvSpeed.setText("最快放款   "+mProductInfoBean.getData().getLoanDay()+"天");
@@ -90,11 +98,16 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
                     mTvProcess.setText(mProductInfoBean.getData().getApplyFlow());
                     mTvCondition.setText(mProductInfoBean.getData().getApplyCondition());
                     mTvDatum.setText(mProductInfoBean.getData().getApplyMaterial());
+                    mWebUrls = mProductInfoBean.getData().getUrl();
 
                     break;
                 }
 
                 break;
+            case POST_APPLY:
+                Logger.json(jsonStr);
+                break;
+
         }
 
     }
@@ -105,15 +118,53 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
     }
 
 
-    public String initTvQuota(Double start, Double end) {
-        String s = String.valueOf((start / 10000)) + "-" + String.valueOf((end / 10000))+"万元";
-        return s;
+    private String initTvQuota(Double start, Double end) {
+        String newStr = String.valueOf((start / 10000)) + "-" + String.valueOf((end / 10000))+"万元";
+        return newStr;
     }
 
-
+    /**
+     * 立即申请按钮
+     */
     @OnClick(R.id.btn_enter)
     public void onViewClicked() {
-        ToastUtils.showToast(me, "点击了立即申请按钮!");
+        postPoint();
+
+
+        Bundle bundle=new Bundle();
+        bundle.putString("url", mWebUrls);
+        bundle.putString("productName", mNameStr);
+
+        if (mWebUrls.contains("jie.gomemyf.com")){
+              ToastUtils.showToast(me,"jie.gomemyf.com");
+        }else {
+            ActivityUtil.goForward(me,WebViewActivity.class,bundle,true);
+        }
+
+
+
+
+    }
+
+    /**
+     * 数据埋点
+     */
+    private void postPoint() {
+        //手机型号
+        String model = android.os.Build.MODEL;
+        //设备厂商
+        String carrier = android.os.Build.MANUFACTURER;
+
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("productId", sId);
+        params.put("deviceNumber", model + "(" + carrier + ")");
+        params.put("applyArea", InitDatas.latitude + "；" + InitDatas.longitude);
+        params.put("channelNo", InitDatas.CHANNEL_NO);
+        params.put("appName", InitDatas.APP_NAME);
+        JSONObject jsonObj=new JSONObject(params);
+        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_APPLY_LOAN,jsonObj,POST_APPLY);
+
 
     }
 

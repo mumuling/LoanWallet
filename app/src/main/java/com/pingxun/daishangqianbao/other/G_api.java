@@ -1,6 +1,7 @@
 package com.pingxun.daishangqianbao.other;
 
 import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.callback.StringDialogCallback;
@@ -37,7 +38,7 @@ public class G_api {
 
 
     /**
-     * 通用get请求
+     * 通用get请求 带Dialog
      * @param urlStr URL
      * @param activity activity
      * @param map 参数
@@ -62,11 +63,35 @@ public class G_api {
                 });
     }
 
+    /**
+     * 通用get请求 不带Dialog
+     * @param urlStr URL
+     * @param map 参数
+     * @param flag 标识
+     */
+    public void getRequest(final String urlStr,Map<String,String> map,final int flag){
+         OkGo.<String>get(urlStr)
+                 .tag(this)
+                 .params(map)
+                 .execute(new StringCallback() {
+                     @Override
+                     public void onSuccess(Response<String> response) {
+                         if (handler!=null){
+                             handler.onResult(response.body(),flag);
+                         }
+                     }
 
+                     @Override
+                     public void onError(Response<String> response) {
+                         if (handler!=null)
+                             handler.onError(flag);
+                     }
+                 });
 
+    }
 
     /**
-     * 通用的上传Json字符串post方法
+     * 通用的上传Json字符串post方法 带Dialog
      * @param urlStr URL
      * @param activity activity
      * @param jsonObject jsonObject
@@ -92,4 +117,33 @@ public class G_api {
 
 
     }
+
+    /**
+     * 通用的上传Json字符串post方法 不带Dialog
+     * @param urlStr URL
+     * @param jsonObject jsonObject
+     * @param flag 标识
+     */
+    public void upJson(final String urlStr,JSONObject jsonObject,final int flag){
+        OkGo.<String>post(urlStr)
+                .tag(this)
+                .upJson(jsonObject)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        if (handler!=null){
+                            handler.onResult(response.body(),flag);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        if (handler!=null)
+                            handler.onError(flag);
+                    }
+                });
+
+    }
+
+
 }

@@ -55,20 +55,28 @@ public class Fragment4 extends BaseFragment {
                 }else {
                     ToastUtils.showToast(mActivity,"您已登录");
                 }
-
-
                 break;
             case R.id.mine_apply://申请记录
+                if (!SharedPrefsUtil.getValue(mActivity, InitDatas.SP_NAME,InitDatas.UserIsLogin,false)){
+                    ActivityUtil.goForward(mActivity, LoginActivity.class,null,false);
+                }else {
+                   ActivityUtil.goForward(mActivity,ApplyListActivity.class,null,false);
+                }
                 break;
             case R.id.mine_about_us://关于我们
+
                 break;
             case R.id.mine_praise://给个好评
+
                 break;
             case R.id.mine_contact_us://联系我们
+
                 break;
             case R.id.mine_version://版本号
+
                 break;
             case R.id.btn_quit://退出登录
+
                 break;
         }
     }

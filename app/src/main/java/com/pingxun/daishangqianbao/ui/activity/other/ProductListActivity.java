@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.pingxun.daishangqianbao.R;
-import com.pingxun.daishangqianbao.adapter.ProductRecyclerViewAdapter;
+import com.pingxun.daishangqianbao.adapter.ProductListRecyclerViewAdapter;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.data.ProductListBean;
 import com.pingxun.daishangqianbao.other.G_api;
@@ -52,7 +52,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
 
 
-    private ProductRecyclerViewAdapter mAdapter;
+    private ProductListRecyclerViewAdapter mAdapter;
     private ProductListBean mBean;
     private List<ProductListBean.DataBean.ContentBean> mListBean;//产品集合
     private List<ProductListBean.DataBean.SortBean> mSortListBean;//以后会用到
@@ -70,8 +70,22 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     @Override
     protected void initData() {
         initTopView("产品超市");
+        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
+        mSwipeLayout.setOnRefreshListener(this);
         onRefresh();
         initAdapter();
+    }
+
+    @OnClick({R.id.rl_money, R.id.rl_time, R.id.rl_type})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.rl_money://贷款金额
+                break;
+            case R.id.rl_time://贷款期限
+                break;
+            case R.id.rl_type://贷款类型
+                break;
+        }
     }
 
     /**
@@ -85,23 +99,22 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         params.put("channelNo", InitDatas.CHANNEL_NO);//渠道类型：ios,android,wechat
         params.put("appName", InitDatas.APP_NAME);
         JSONObject jsonObject = new JSONObject(params);
-        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION, this, jsonObject, REFRESH);
+        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION,jsonObject, REFRESH);
     }
+
+
     private void initAdapter() {
         notDataView = me.getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) mRv.getParent(), false);
         errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRv.getParent(), false);
-        mRv.setLayoutManager(new LinearLayoutManager(me, LinearLayoutManager.VERTICAL, false));
+
+        mRv.setLayoutManager(new LinearLayoutManager(me));
         mRv.addItemDecoration(new VerticalItemDecoration(me, 1));
-        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
-        mSwipeLayout.setOnRefreshListener(this);
-        mAdapter = new ProductRecyclerViewAdapter(R.layout.rv_item_product_list,mListBean);
-//        mAdapter.setOnLoadMoreListener(this, mRv);
+        mAdapter = new ProductListRecyclerViewAdapter(R.layout.rv_item_product_list,mListBean);
+//      mAdapter.setOnLoadMoreListener(this, mRv);
         mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
-
-
         mRv.setAdapter(mAdapter);
         mRv.setHasFixedSize(true);
-        mRv.setLayoutManager(new LinearLayoutManager(me));
+
         mRv.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -128,7 +141,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     @Override
     public void onResult(String jsonStr, int flag) {
         switch (flag){
-            case REFRESH:
+            case REFRESH://下拉刷新返回数据的回调
                 mRv.setVisibility(View.VISIBLE);
                 mBean= Convert.fromJson(jsonStr,ProductListBean.class);
                 if (mBean==null||!mBean.isSuccess()){
@@ -141,6 +154,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                 }
 
                 break;
+            case LOADMORE://上拉加载发挥数据的回调
+
+                break;
         }
 
     }
@@ -150,20 +166,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
     }
 
-
-
-    @OnClick({R.id.rl_money, R.id.rl_time, R.id.rl_type})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.rl_money:
-                break;
-            case R.id.rl_time:
-                break;
-            case R.id.rl_type:
-                break;
-        }
-    }
-
+    /**
+     * 刷新控件接口
+     */
     @Override
     public void onRefresh() {
         mSwipeLayout.setRefreshing(true);
@@ -180,6 +185,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                 });
     }
 
+    /**
+     * 上拉加载接口
+     */
     @Override
     public void onLoadMoreRequested() {
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                style="@style/MatchWrap"
+                android:background="@color/white"
+                android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="14dp"/>
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/WrapWrap"
+        android:layout_toRightOf="@+id/iv"
+        android:text="标题"
+        android:textColor="@color/black"/>
+
+    <LinearLayout
+        style="@style/MatchWrap.Horizontal"
+         android:layout_below="@+id/tv_title"
+        android:layout_marginTop="10dp"
+        android:layout_toRightOf="@+id/iv">
+
+        <LinearLayout
+           style="@style/AutoWrap.Vertical">
+            <TextView
+                android:text="额度范围"
+                android:textSize="12sp"
+                style="@style/WrapWrap"/>
+
+            <TextView
+                android:id="@+id/tv_money"
+                android:text="11111"
+                style="@style/WrapWrap"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AutoWrap.Vertical">
+            <TextView
+                android:text="期限范围"
+                android:textSize="12sp"
+                style="@style/WrapWrap"/>
+
+            <TextView
+                android:id="@+id/tv_time"
+                android:text="11111"
+                style="@style/WrapWrap"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            style="@style/AutoWrap.Vertical">
+            <TextView
+                android:id="@+id/tv_lilv"
+                android:text="利率"
+                android:textSize="12sp"
+                style="@style/WrapWrap"/>
+
+            <TextView
+                android:id="@+id/tv_rate"
+                android:text="11111"
+                style="@style/WrapWrap"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

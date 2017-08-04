@@ -6,11 +6,12 @@
 
     <include layout="@layout/topview"/>
 
-    <include layout="@layout/line_vertical_1px"/>
+    <include layout="@layout/line_vertical_1px_fragment4"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
+        android:background="@color/white"
         android:orientation="horizontal">
 
         <RelativeLayout
@@ -71,18 +72,20 @@
 
     </LinearLayout>
 
-    <include layout="@layout/line_vertical_1px"/>
+    <include layout="@layout/line_vertical_1px_fragment4"/>
 
     <TextView
+        android:background="@color/white"
         style="@style/MatchWrap"
-        android:layout_marginBottom="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
+
         android:text="温馨提示:同时申请多个贷款,可以有效提高放款成功率!"
-        android:textColor="@color/tab_font_bright"/>
+        android:textSize="12sp"/>
 
 
-    <include layout="@layout/line_vertical_1px"/>
+    <include layout="@layout/line_vertical_1px_fragment4"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"

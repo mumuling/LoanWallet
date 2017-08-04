@@ -13,13 +13,13 @@ import java.util.List;
 
 /**
  * Created by Lh on 2017-08-03.
- * 产品列表adapter
+ * 产品列表列表adapter
  */
 
-public class ProductRecyclerViewAdapter extends BaseQuickAdapter<ProductListBean.DataBean.ContentBean, BaseViewHolder> {
+public class ProductListRecyclerViewAdapter extends BaseQuickAdapter<ProductListBean.DataBean.ContentBean, BaseViewHolder> {
 
 
-    public ProductRecyclerViewAdapter(int layoutResId, List<ProductListBean.DataBean.ContentBean> dataBeanList) {
+    public ProductListRecyclerViewAdapter(int layoutResId, List<ProductListBean.DataBean.ContentBean> dataBeanList) {
         super(layoutResId, dataBeanList);
 
     }
@@ -27,15 +27,19 @@ public class ProductRecyclerViewAdapter extends BaseQuickAdapter<ProductListBean
     @Override
     protected void convert(BaseViewHolder helper, ProductListBean.DataBean.ContentBean item) {
           helper.setText(R.id.tv_title,item.getName());
-          helper.setText(R.id.tv_money_range,newStr("借款额度",String.valueOf(item.getStartAmount()),String.valueOf(item.getEndAmount()),"元"));
+          helper.setText(R.id.tv_money_range,"额度范围  "+initTvQuota(item.getStartAmount(),item.getEndAmount()));
           helper.setText(R.id.tv_time_range,newStr("期限范围",String.valueOf(item.getStartPeriod()),String.valueOf(item.getEndPeriod()),item.getPeriodType()));
           helper.setText(R.id.tv_interest_rate,item.getPeriodType()+"利率   "+String.valueOf(item.getServiceRate())+"%");
           Glide.with(mContext).load(item.getImg()).crossFade().transform(new GlideRoundTransform(mContext,10)).into((ImageView) helper.getView(R.id.iv));
     }
 
-    public String newStr(String s1,String s2,String s3,String s4){
+    private String newStr(String s1, String s2, String s3, String s4){
         String str=s1+"  "+s2+"-"+s3+s4;
         return str;
+    }
+    private String initTvQuota(Double start, Double end) {
+        String s = String.valueOf((start / 10000)) + "-" + String.valueOf((end / 10000))+"万元";
+        return s;
     }
 
 }
