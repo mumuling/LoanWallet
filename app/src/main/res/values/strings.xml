@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">贷上钱包</string>
 
+    <string name="home_tab_1">产品大全</string>
+    <string name="home_tab_2">精准</string>
+    <string name="home_tab_3">信用卡</string>
+    <string name="home_tab_4">我的</string>
 
-    <!--pickerview-->
-    <string name="pickerview_cancel">取消</string>
-    <string name="pickerview_submit">确定</string>
-    <string name="pickerview_year">年</string>
-    <string name="pickerview_month">月</string>
-    <string name="pickerview_day">日</string>
-    <string name="pickerview_hours">时</string>
-    <string name="pickerview_minutes">分</string>
-    <string name="pickerview_seconds">秒</string>
 </resources>

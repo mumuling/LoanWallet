@@ -22,6 +22,7 @@ import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,9 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
 
     private F1_Type_RecyclerViewAdapter mTypeAdapter;
     private List<F1ProductTypeBean.DataBean> mTypeList;
+
+
+
 
 
     @Override
@@ -164,6 +168,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
         switch (flag) {
 
             case GET_BANNER://获取Banner回调
+                Logger.json(jsonStr);
                 BannerBean mBannerBean = Convert.fromJson(jsonStr, BannerBean.class);
                 if (mBannerBean == null || !mBannerBean.isSuccess()) {
                     ToastUtils.showToast(mActivity, "获取Banner失败!");
@@ -175,7 +180,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
                 }
                 break;
 
-            case GET_PRODUCT_RECOMMEND://产品推荐
+            case GET_PRODUCT_RECOMMEND://产品推荐回调
                 Logger.json(jsonStr);
                 break;
 
@@ -192,9 +197,9 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
                 }
                 break;
 
-            case GET_CREDIT_CARD://信用卡推荐
+            case GET_CREDIT_CARD://信用卡推荐回调
 
-//                Logger.json(jsonStr);
+//              Logger.json(jsonStr);
                 break;
 
 
@@ -215,10 +220,16 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
      */
     private void setShowpic(List<BannerBean.DataBean> mBannerlist) {
         List<String> imgUrlList = new ArrayList<>();
+
         for (int i = 0; i < mBannerlist.size(); i++) {
             //获得每张图片的地址
             String url = mBannerlist.get(i).getBannerImg();
             imgUrlList.add(i, url);
+        }
+
+        if (imgUrlList.size()==0){
+            mBanner.setBackgroundResource(R.mipmap.holder);
+            return;
         }
         mBanner.setData(imgUrlList, null);
         mBanner.setAdapter(Fragment1.this);
@@ -230,7 +241,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
         Glide.with(itemView.getContext())
                 .load(model)
                 .placeholder(R.mipmap.tu_jiazai)
-                .error(R.mipmap.tu_jiazai)
+                .error(R.mipmap.ic_launcher)
                 .dontAnimate()
                 .centerCrop()
                 .into(itemView);

@@ -149,9 +149,10 @@ public class InitDatas {
     public static String SP_NAME=APP_NAME+"_UserInfo";//sp文件名
 
     //用于SP存储用户信息的Key
-    public static String UserPhone=APP_NAME+"_Phone";//用户手机号key
-    public static String UserPw=APP_NAME+"_Pw";//用户验证码(密码)key
-    public static String UserIsLogin=APP_NAME+"_IsLogin";//用户是否登录key
+    public static String UserPhone=SP_NAME+"_Phone";//用户手机号key
+    public static String UserPw=SP_NAME+"_Pw";//用户验证码(密码)key
+    public static String UserIsLogin=SP_NAME+"_IsLogin";//用户是否登录key
+    public static String UserIsFirstSplash=SP_NAME+"_IsFirstSplash";//是否第一次启动key
 
     //用于bundle传值的key
     public static String PERIOD="period";

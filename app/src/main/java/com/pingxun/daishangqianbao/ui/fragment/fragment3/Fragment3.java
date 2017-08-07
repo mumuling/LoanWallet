@@ -114,7 +114,7 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
 
         mRv2.setHasFixedSize(true);
         mRv2.setLayoutManager(new LinearLayoutManager(mActivity));
-        mRv2.addItemDecoration(new VerticalItemDecoration(mActivity, 1));
+//        mRv2.addItemDecoration(new VerticalItemDecoration(mActivity, 1));
         mRv2.setAdapter(mCardAdapter);
         mRv2.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override

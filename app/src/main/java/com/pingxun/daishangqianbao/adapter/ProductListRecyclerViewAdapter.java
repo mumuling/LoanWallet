@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Created by Lh on 2017-08-03.
- * 产品列表列表adapter
+ * 产品列表adapter
  */
 
 public class ProductListRecyclerViewAdapter extends BaseQuickAdapter<ProductListBean.DataBean.ContentBean, BaseViewHolder> {

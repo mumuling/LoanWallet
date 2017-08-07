@@ -1,155 +1,109 @@
 package com.pingxun.daishangqianbao.ui.activity.common;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+
+import android.support.v4.app.FragmentTabHost;
+
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+
+import android.widget.ImageView;
+import android.widget.TabHost;
+import android.widget.TextView;
+import android.widget.Toast;
+
 
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseActivity;
-import com.pingxun.daishangqianbao.ui.fragment.fragment1.Fragment1;
-import com.pingxun.daishangqianbao.ui.fragment.fragment2.Fragment2;
-import com.pingxun.daishangqianbao.ui.fragment.fragment3.Fragment3;
-import com.pingxun.daishangqianbao.ui.fragment.fragment4.Fragment4;
-import com.pingxun.daishangqianbao.utils.ToastUtils;
+
+import com.pingxun.daishangqianbao.utils.ArrayUtils;
+
 
 import butterknife.BindView;
-import butterknife.OnClick;
-
-public class MainActivity extends BaseActivity {
 
 
-    @BindView(R.id.main_framelayout)
-    FrameLayout mMainFramelayout;
-    @BindView(R.id.main_rb_1)
-    RadioButton mMainRb1;//产品大全
-    @BindView(R.id.main_rb_2)
-    RadioButton mMainRb2;//精准
-    @BindView(R.id.main_rb_3)
-    RadioButton mMainRb3;//信用卡
-    @BindView(R.id.main_rb_4)
-    RadioButton mMainRb4;//我的
-    @BindView(R.id.main_rg)
-    RadioGroup mMainRg;
+public class MainActivity extends BaseActivity implements TabHost.OnTabChangeListener {
 
 
-
-    private long exitTime = 0;
-    private Fragment1 mFragment1;
-    private Fragment2 mFragment2;
-    private Fragment3 mFragment3;
-    private Fragment4 mFragment4;
-
-    // 定义FragmentManager对象管理器
-    private FragmentManager fragmentManager;
-    public final static int TAB_ONE = 0;     //产品大全
-    public final static int TAB_TWO = 1;     //精准
-    public final static int TAB_THREE = 2;   //信用卡
-    public final static int TAB_FOUR = 3;    //我的
+    @BindView(R.id.realtabcontent)
+    FrameLayout realtabcontent;
+    @BindView(R.id.my_tabhost)
+    FragmentTabHost mTabHost;
+    private long mLastPressBackTime;
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_main;
+        return R.layout.ui_home;
     }
 
     @Override
     protected void initData() {
-        fragmentManager = getSupportFragmentManager();
-        setChioceItem(TAB_ONE);   // 初始化页面加载时显示第一个选项卡
+        initTabs();
+    }
+
+    @SuppressLint("ObsoleteSdkInt")
+    private void initTabs() {
+        mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
+        if (Build.VERSION.SDK_INT > 10) {
+            mTabHost.getTabWidget().setShowDividers(0);
+        }
+        MainTab[] tabs = MainTab.values();
+        if (ArrayUtils.isEmpty(tabs)) {
+            return;
+        }
+
+        for (MainTab mainTab : tabs) {
+            TabHost.TabSpec tabSpec = mTabHost.newTabSpec(getString(mainTab.getResName()));
+            @SuppressLint("InflateParams") ViewGroup indicator = (ViewGroup) getLayoutInflater().inflate(R.layout.tab_indicator, null, false);
+            TextView title = (TextView) indicator.findViewById(R.id.tab_title);
+            title.setText(getString(mainTab.getResName()));
+            ImageView icon = (ImageView) indicator.findViewById(R.id.tab_icon);
+           // icon.getHierarchy().setPlaceholderImage(mainTab.getResIcon());
+            icon.setImageResource(mainTab.getResIcon());
+            tabSpec.setIndicator(indicator);
+            tabSpec.setContent(new TabHost.TabContentFactory() {
+                @Override
+                public View createTabContent(String tag) {
+                    return new View(getApplicationContext());
+                }
+            });
+            mTabHost.addTab(tabSpec, mainTab.getClazz(), null);
+
+        }
+        mTabHost.setOnTabChangedListener(this);
+    }
+
+    @Override
+    public void onTabChanged(String s) {
+        final int size = mTabHost.getTabWidget().getTabCount();
+        for (int i = 0; i < size; i++) {
+            View v = mTabHost.getTabWidget().getChildAt(i);
+            if (i == mTabHost.getCurrentTab()) {
+                v.setSelected(true);
+            } else {
+                v.setSelected(false);
+            }
+        }
+        supportInvalidateOptionsMenu();
     }
 
 
-    /**
-     * 设置点击选项卡的事件处理
-     *
-     * @param index 选项卡的标号：0, 1, 2, 3
-     */
-    private void setChioceItem(int index) {
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        hideFragments(fragmentTransaction);
-
-        switch (index) {
-            case TAB_ONE:
-                // 如果fg1为空，则创建一个并添加到界面上
-                if (mFragment1 == null) {
-                    mFragment1 = new Fragment1();
-                    fragmentTransaction.add(R.id.main_framelayout, mFragment1);
-                } else {
-                    // 如果不为空，则直接将它显示出来
-                    fragmentTransaction.show(mFragment1);
-                }
-                break;
-
-            case TAB_TWO:
-                if (mFragment2 == null) {
-                    mFragment2 = new Fragment2();
-                    fragmentTransaction.add(R.id.main_framelayout, mFragment2);
-                } else {
-                    fragmentTransaction.show(mFragment2);
-                }
-                break;
-
-            case TAB_THREE:
-                if (mFragment3 == null) {
-                    mFragment3 = new Fragment3();
-                    fragmentTransaction.add(R.id.main_framelayout, mFragment3);
-                } else {
-                    fragmentTransaction.show(mFragment3);
-                }
-                break;
-
-            case TAB_FOUR:
-                if (mFragment4 == null) {
-                    mFragment4 = new Fragment4();
-                    fragmentTransaction.add(R.id.main_framelayout, mFragment4);
-                } else {
-                    fragmentTransaction.show(mFragment4);
-                }
-                break;
-        }
-        fragmentTransaction.commit();   // 提交
-
-    }
-
-    /**
-     * 隐藏Fragment
-     */
-    private void hideFragments(FragmentTransaction fragmentTransaction) {
-        if (mFragment1 != null) {
-            fragmentTransaction.hide(mFragment1);
-        }
-
-        if (mFragment2 != null) {
-            fragmentTransaction.hide(mFragment2);
-        }
-
-        if (mFragment3 != null) {
-            fragmentTransaction.hide(mFragment3);
-        }
-
-        if (mFragment4 != null) {
-            fragmentTransaction.hide(mFragment4);
-        }
-    }
-
-    /**
-     * 双击退出程序
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if ((keyCode == KeyEvent.KEYCODE_BACK) && (event.getAction() == KeyEvent.ACTION_DOWN)) {
-            if (System.currentTimeMillis() - exitTime > 2000) { // 2s内再次选择back键有效
-                ToastUtils.showToast(me, "再按一次退出程序");
-                exitTime = System.currentTimeMillis();
+        if (keyCode == KeyEvent.ACTION_DOWN || keyCode == KeyEvent.KEYCODE_BACK) {
+            long current = System.currentTimeMillis();
+
+            if (current - mLastPressBackTime > 2000) {
+                mLastPressBackTime = current;
+                Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show();
             } else {
-                closeActivtiy();
+//                MasterManager.getInstance().stopApp();
+               closeActivtiy();
             }
             return true;
         }
@@ -157,23 +111,6 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    @OnClick({R.id.main_rb_1, R.id.main_rb_2, R.id.main_rb_3, R.id.main_rb_4})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.main_rb_1:
-                setChioceItem(TAB_ONE);
-                break;
-            case R.id.main_rb_2:
-                setChioceItem(TAB_TWO);
-                break;
-            case R.id.main_rb_3:
-                setChioceItem(TAB_THREE);
-                break;
-            case R.id.main_rb_4:
-                setChioceItem(TAB_FOUR);
-                break;
-        }
-    }
 
 
 

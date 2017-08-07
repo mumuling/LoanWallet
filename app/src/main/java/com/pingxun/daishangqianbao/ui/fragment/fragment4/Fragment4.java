@@ -1,5 +1,7 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment4;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -9,8 +11,10 @@ import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseFragment;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
+import com.pingxun.daishangqianbao.ui.view.DialogPopupView;
 import com.pingxun.daishangqianbao.ui.view.XCRoundImageView;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
+import com.pingxun.daishangqianbao.utils.AppUtils;
 import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 
@@ -43,6 +47,7 @@ public class Fragment4 extends BaseFragment {
 
     @Override
     protected void initData() {
+        mTvVersion.setText("版本号"+AppUtils.getVersionName(mActivity));
         mTvName.setText(SharedPrefsUtil.getValue(mActivity,InitDatas.SP_NAME,InitDatas.UserPhone,"未登录"));
     }
 
@@ -70,12 +75,15 @@ public class Fragment4 extends BaseFragment {
 
                 break;
             case R.id.mine_contact_us://联系我们
-
+                DialogPopupView dialogPopupView=new DialogPopupView(mActivity);
+                dialogPopupView.showPopupWindow();
                 break;
             case R.id.mine_version://版本号
 
+
                 break;
             case R.id.btn_quit://退出登录
+
 
                 break;
         }

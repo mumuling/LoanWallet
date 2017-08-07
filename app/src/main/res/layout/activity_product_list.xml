@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MatchMatch.Vertical">
 
-    <include layout="@layout/topview"/>
+    <include layout="@layout/topview" />
 
-    <include layout="@layout/line_vertical_1px_fragment4"/>
+    <include layout="@layout/line_vertical_1px_fragment4" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,10 +24,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:drawablePadding="2dp"
-                android:drawableRight="@drawable/activity_product_list_xjt"
                 android:gravity="center"
-                android:text="贷款金额"/>
+                android:text="贷款金额" />
+
+            <ImageView
+                android:id="@+id/iv_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/tv_money"
+                android:src="@mipmap/icon_xiajiantou" />
 
         </RelativeLayout>
 
@@ -44,10 +50,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:drawablePadding="2dp"
-                android:drawableRight="@drawable/activity_product_list_xjt"
                 android:gravity="center"
-                android:text="贷款期限"/>
+                android:text="贷款期限" />
+
+            <ImageView
+                android:id="@+id/iv_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@+id/tv_time"
+                android:src="@mipmap/icon_xiajiantou" />
 
         </RelativeLayout>
 
@@ -63,29 +76,42 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
-                android:drawablePadding="2dp"
-                android:drawableRight="@drawable/activity_product_list_xjt"
                 android:gravity="center"
-                android:text="贷款类型"/>
+                android:text="贷款类型" />
+
+            <ImageView
+                android:layout_toRightOf="@+id/tv_type"
+                android:layout_centerVertical="true"
+                android:id="@+id/iv_type"
+                android:layout_marginLeft="5dp"
+                android:src="@mipmap/icon_xiajiantou"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </RelativeLayout>
 
     </LinearLayout>
 
-    <include layout="@layout/line_vertical_1px_fragment4"/>
+    <View
+        android:id="@+id/view_line"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#e0e0e0">
+
+    </View>
 
     <TextView
-        android:background="@color/white"
         style="@style/MatchWrap"
-        android:paddingTop="10dp"
-        android:paddingLeft="10dp"
+        android:background="@color/white"
         android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
 
         android:text="温馨提示:同时申请多个贷款,可以有效提高放款成功率!"
-        android:textSize="12sp"/>
+        android:textSize="12sp" />
 
 
-    <include layout="@layout/line_vertical_1px_fragment4"/>
+    <include layout="@layout/line_vertical_1px_fragment4" />
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
@@ -93,7 +119,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
-            style="@style/MatchMatch"/>
+            style="@style/MatchMatch" />
     </android.support.v4.widget.SwipeRefreshLayout>
 
 

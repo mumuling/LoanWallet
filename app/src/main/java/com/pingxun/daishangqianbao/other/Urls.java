@@ -6,9 +6,9 @@ package com.pingxun.daishangqianbao.other;
 
 public class Urls {
     //GET接口
-    //"https://119.23.64.92"外网
+    //"https://119.23.64.92/"外网
     //"https://192.168.1.100:1234/"内网
-    public static final String SERVER = "https://192.168.1.100:1234/";
+    public static final String SERVER = "https://119.23.64.92/";
     public static final String URL_GET_BANNER=SERVER+"common/findBanner.json";//获取Banner
     public static final String URL_GET_PRODUCT_RECOMMEND=SERVER+"front/product/findRecommendProduct.json";//获取产品推荐
     public static final String URL_GET_PRODUCT_TYPE=SERVER+"front/product/findProductType.json";//产品分类(用钱不必等那一栏)

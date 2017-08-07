@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MatchMatch.Vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="#08000000">
 
     <LinearLayout
         style="@style/MatchWrap.Vertical"
         android:background="@color/white"
-        android:gravity="center_horizontal"
-        >
+        android:gravity="center_horizontal">
 
         <TextView
             style="@style/WrapWrap"
@@ -17,18 +16,16 @@
             android:textColor="@color/black"
             android:textSize="20sp" />
 
-
-
         <TextView
-           style="@style/WrapWrap"
+            style="@style/WrapWrap"
             android:layout_marginTop="35dp"
-            android:text="借款金额"/>
+            android:text="借款金额" />
 
         <TextView
             android:id="@+id/tv_total_money"
             style="@style/WrapWrap"
             android:layout_marginTop="12dp"
-            android:text="￥ 80,000"
+
             android:textColor="@color/tab_font_bright"
             android:textSize="24sp" />
 
@@ -39,10 +36,18 @@
             <com.pingxun.daishangqianbao.ui.view.RulerView
                 android:id="@+id/rulerView"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:background="#00000000"
-                app:tag_color="#00000000"
-                app:scale_select_background_color="#00000000" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:alphaEnable="true"
+                app:lineColor="@color/tab_font_bright"
+                app:lineMaxHeight="35dp"
+                app:lineMidHeight="30dp"
+                app:lineMinHeight="25dp"
+                app:lineSpaceWidth="5dp"
+                app:lineWidth="1dp"
+                app:textColor="@color/tab_font_bright"
+                app:textMarginTop="16dp"
+                app:textSize2="10sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -59,10 +64,9 @@
         android:scrollbars="none">
 
         <LinearLayout
-            android:gravity="center_horizontal"
             style="@style/MatchWrap"
-            android:background="@color/mainColor"
             android:divider="@drawable/borders"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
             android:showDividers="middle">
 
@@ -70,38 +74,38 @@
             <!--日 月-->
             <LinearLayout
                 style="@style/MatchWrap"
-                android:layout_marginTop="20dp"
                 android:background="@drawable/borders"
-                android:gravity="center">
+                android:gravity="center"
+                android:paddingBottom="10dp"
+                android:paddingTop="20dp">
 
                 <ImageButton
-                    android:id="@+id/loanUnitButton"
-
+                    android:id="@+id/btn_day_or_month"
                     style="@style/WrapWrap"
                     android:background="@mipmap/icon_date_day" />
             </LinearLayout>
 
+
             <!--进度条-->
             <RelativeLayout
-               style="@style/WrapWrap"
-                android:layout_marginTop="30dp">
+                style="@style/MatchWrap"
+                android:background="@color/white">
 
                 <TextView
-                    android:id="@+id/limitDateStart"
+                    android:id="@+id/tv_start_time"
                     style="@style/WrapWrap"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="center_horizontal"
+                    android:layout_toLeftOf="@+id/seekBar"
                     android:text="1天"
-                    android:textColor="#cc000000"
-                    android:textSize="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
                     android:typeface="serif" />
 
                 <SeekBar
-                    android:id="@+id/loanTimeSeekBar"
+                    android:id="@+id/seekBar"
                     android:layout_width="240dp"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/limitDateStart"
+                    android:layout_centerInParent="true"
                     android:maxHeight="10dp"
                     android:minHeight="10dp"
                     android:progressDrawable="@drawable/po_seekbar"
@@ -109,15 +113,13 @@
                     android:thumbOffset="0dp" />
 
                 <TextView
-                    android:id="@+id/limitDateEnd"
-                    android:layout_toRightOf="@+id/loanTimeSeekBar"
+                    android:id="@+id/tv_end_time"
                     style="@style/WrapWrap"
                     android:layout_centerVertical="true"
-                    android:gravity="center_horizontal"
+                    android:layout_toRightOf="@+id/seekBar"
                     android:text="360天"
-                    android:textAlignment="center"
-                    android:textColor="#cc000000"
-                    android:textSize="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
                     android:typeface="serif" />
 
             </RelativeLayout>
@@ -125,8 +127,8 @@
             <!--还款信息-->
             <LinearLayout
                 style="@style/MatchWrap.Horizontal"
-                android:layout_marginTop="20dp"
-                android:visibility="visible">
+                android:background="@color/white"
+                android:paddingTop="20dp">
 
                 <TextView
                     style="@style/MatchWrap"
@@ -148,8 +150,8 @@
             </LinearLayout>
 
             <LinearLayout
-               style="@style/MatchWrap.Horizontal"
-                android:visibility="visible">
+                style="@style/MatchWrap.Horizontal"
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/tv_hkqx"
@@ -158,8 +160,8 @@
                     android:gravity="center_horizontal"
                     android:text="0天"
                     android:textAlignment="center"
-                    android:textSize="16dp"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
                     android:typeface="serif" />
 
                 <TextView
@@ -169,85 +171,49 @@
                     android:gravity="center_horizontal"
                     android:text="￥0"
                     android:textAlignment="center"
-                    android:textSize="16dp"
                     android:textColor="@color/black"
+                    android:textSize="16dp"
                     android:typeface="serif" />
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_marginTop="22dp"
-                android:background="#11000000" />
 
-
-
-            <!--搜索按钮-->
             <!--选择职业-->
             <LinearLayout
-                android:id="@+id/chooseJobLine"
-                android:layout_width="match_parent"
-                android:orientation="vertical"
+                android:id="@+id/lin_job_choose"
+                style="@style/MatchWrap"
                 android:layout_marginTop="10dp"
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:gravity="center"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/chooseJobText"
-                        android:layout_width="wrap_content"
-                        android:gravity="fill_vertical"
-                        android:layout_weight="3"
-                        android:textSize="16dp"
-                        android:layout_marginLeft="30dp"
-                        android:text="选择职业"
-                        android:layout_height="30dp" />
+                android:background="@color/white"
+                android:padding="10dp">
 
-                    <ImageView
-                        android:layout_width="10dp"
-                        android:layout_weight="0.2"
-                        android:layout_marginRight="30dp"
-                        android:background="@mipmap/next_btn"
-                        android:layout_height="20dp" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="5dp"
-                        android:layout_marginTop="10dp"
-                        android:background="#11000000" />
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                style="@style/MatchMatch"
-                android:background="#08000000"
-                android:gravity="center"
-                android:paddingTop="15dp">
+                <TextView
+                    android:id="@+id/tv_job"
+                    style="@style/WrapWrap"
+                    android:layout_marginLeft="30dp"
+                    android:layout_weight="3"
+                    android:text="选择职业"
+                    android:textSize="18sp" />
 
-                <Button
-                    android:id="@+id/searchButton"
-                    android:layout_width="320dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/cornerbottom"
-                    android:text="搜索"
-                    android:textAlignment="center"
-                    android:textColor="#FFFEFF"
-                    android:textSize="20dp"
-                    android:typeface="serif" />
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="20dp"
+                    android:layout_marginRight="30dp"
+                    android:layout_weight="0.2"
+                    android:background="@mipmap/next_btn" />
 
             </LinearLayout>
 
-            <!--占位-->
-            <LinearLayout
+            <!--搜索按钮-->
+            <Button
+                android:id="@+id/btn_search"
                 android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:background="#08000000">
-            </LinearLayout>
+                android:layout_height="50dp"
+                android:layout_margin="30dp"
+                android:background="@drawable/cornerbottom"
+                android:text="搜 索"
+                android:textAlignment="center"
+                android:textColor="#FFFEFF"
+                android:textSize="20sp"
+                android:typeface="serif" />
 
         </LinearLayout>
 

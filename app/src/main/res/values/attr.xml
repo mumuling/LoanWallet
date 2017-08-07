@@ -1,58 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="RulerView">
-        <!--最大刻度-->
-        <attr name="max_value" format="dimension" />
-        <!--最小刻度-->
-        <attr name="min_value" format="dimension" />
-        <!--刻度字体大小-->
-        <attr name="scale_text_size" format="dimension" />
-        <!--刻度字体颜色-->
-        <attr name="scale_text_color" format="color" />
-        <!--刻度超过颜色-->
-        <attr name="scale_select_color" format="color" />
-        <!--刻度超过颜色背景-->
-        <attr name="scale_select_background_color" format="color" />
-        <!--刻度未超颜色-->
-        <attr name="scale_unselect_color" format="color" />
-        <!--标记颜色-->
-        <attr name="tag_color" format="color" />
-        <!--标尺开始显示位置-->
-        <attr name="start_location" format="dimension" />
-        <!--一屏显示Item-->
-        <attr name="show_item_size" format="integer" />
-        <!--一个刻度的大小-->
-        <attr name="one_item_value" format="integer" />
 
+    <declare-styleable name="RulerView">
+        <!--文字颜色-->
+        <attr name="textColor" format="color" />
+        <!--文字大小-->
+        <attr name="textSize2" format="dimension" />
+        <!--竖线颜色-->
+        <attr name="lineColor" format="color" />
+        <!--竖线之间的距离-->
+        <attr name="lineSpaceWidth" format="dimension" />
+        <!--竖线的宽度-->
+        <attr name="lineWidth" format="dimension" />
+        <!--竖线最大高度-->
+        <attr name="lineMaxHeight" format="dimension" />
+        <!--竖线中间高度-->
+        <attr name="lineMidHeight" format="dimension" />
+        <!--竖线最小高度-->
+        <attr name="lineMinHeight" format="dimension" />
+        <!--文本距离竖线的距离-->
+        <attr name="textMarginTop" format="dimension" />
+        <!--是否设置两边透明度-->
+        <attr name="alphaEnable" format="boolean" />
+        <!--最小值-->
+        <attr name="minValue" format="float"/>
+        <!--最大值-->
+        <attr name="maxValue" format="float"/>
+        <!--选中值-->
+        <attr name="selectorValue" format="float"/>
+        <!--刻度尺单位值-->
+        <attr name="perValue" format="float"/>
     </declare-styleable>
-    <declare-styleable name="DropDownMenu">
-        <!--下划线颜色-->
-        <attr name="underlineColor" format="color" />
-        <!--分割线颜色(菜单栏)-->
-        <attr name="dividerColor" format="color" />
-        <!--tab选中颜色-->
-        <attr name="textSelectedColor" format="color" />
-        <!--tab未选中颜色-->
-        <attr name="textUnselectedColor" format="color" />
-        <!--tab 背景颜色-->
-        <attr name="menuBackgroundColor" format="color" />
-        <!--遮罩颜色，一般是半透明-->
-        <attr name="maskColor" format="color" />
-        <!--字体大小-->
-        <attr name="menuTextSize" format="dimension" />
-        <!--tab选中状态图标-->
-        <attr name="menuSelectedIcon" format="reference" />
-        <!--tab未选中状态图标-->
-        <attr name="menuUnselectedIcon" format="reference" />
-    </declare-styleable>
-    <declare-styleable name="wheelview">
-        <attr name="gravity">
-            <enum name="center" value="17"/>
-            <enum name="left" value="3"/>
-            <enum name="right" value="5"/>
-        </attr>
-        <attr name="textSize" format="dimension"/>
-        <attr name="textColorOut" format="color"/>
-        <attr name="textColorCenter" format="color"/>
-    </declare-styleable>
+
 </resources>

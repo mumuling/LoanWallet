@@ -1,6 +1,7 @@
 package com.pingxun.daishangqianbao.base;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
@@ -22,10 +23,7 @@ import butterknife.Unbinder;
  */
 public abstract class BaseFragment extends Fragment {
 
-
-
-
-    protected View mContentView;
+    protected ViewGroup mContentView;
     protected String TAG;
     protected App mApp;
     protected BaseActivity mActivity;
@@ -44,9 +42,16 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContentView = LayoutInflater.from(mActivity).inflate(getRootLayoutResID(), null);
+        //这里的判断是起到设置缓存的效果，如果不判断则每次点击Tab都会刷新一次
+        if (mContentView==null){
+            //mContentView = LayoutInflater.from(mActivity).inflate(getRootLayoutResID(), null);
+            mContentView = (ViewGroup) inflater.inflate(getRootLayoutResID(), container, false);
+            unbinder = ButterKnife.bind(this, mContentView);
+            initData();
+        }else if (mContentView.getParent()!=null){
+            ((ViewGroup) mContentView.getParent()).removeView(mContentView);
+        }
         unbinder = ButterKnife.bind(this, mContentView);
-        initData();
         return mContentView;
     }
 

@@ -26,8 +26,7 @@ public class F1_Type_RecyclerViewAdapter extends BaseQuickAdapter<F1ProductTypeB
 
     @Override
     protected void convert(BaseViewHolder helper, F1ProductTypeBean.DataBean item) {
-        Glide.with(mContext).load(item.getImg()).placeholder(R.mipmap.ic_launcher).error(R.mipmap.ic_launcher).crossFade().transform(new GlideRoundTransform(mContext,10)).into((ImageView) helper.getView(R.id.iv));
-
+        Glide.with(mContext).load(item.getImg()).placeholder(R.mipmap.tu_jiazai).error(R.mipmap.ic_launcher).crossFade().transform(new GlideRoundTransform(mContext,10)).into((ImageView) helper.getView(R.id.iv));
         helper.setText(R.id.tv_title,item.getName());
         helper.setText(R.id.tv_sub_title,item.getDescription());
 
