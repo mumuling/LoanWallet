@@ -13,6 +13,7 @@ import com.pingxun.daishangqianbao.data.ProductInfoBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.ui.view.IsApplyDialogPopupView;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.GlideRoundTransform;
@@ -53,7 +54,7 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
     Button mBtnEnter;//立即借款
 
     private ProductInfoBean mProductInfoBean;
-    private String sId;
+    private String sId;//产品ID
     private static final int GET_FIND_BY_ID = 1;//获取产品详情
     private static final int POST_APPLY=2;//立即申请
 
@@ -117,7 +118,6 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
 
     }
 
-
     private String initTvQuota(Double start, Double end) {
         String newStr = String.valueOf((start / 10000)) + "-" + String.valueOf((end / 10000))+"万元";
         return newStr;
@@ -130,7 +130,9 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
     public void onViewClicked() {
         postPoint();
 
-
+        IsApplyDialogPopupView isApplyDialogPopupViewView =new IsApplyDialogPopupView(me,sId);
+        isApplyDialogPopupViewView.setPopupWindowFullScreen(true);
+        isApplyDialogPopupViewView.showPopupWindow();
         Bundle bundle=new Bundle();
         bundle.putString("url", mWebUrls);
         bundle.putString("productName", mNameStr);
@@ -138,13 +140,11 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         if (mWebUrls.contains("jie.gomemyf.com")){
               ToastUtils.showToast(me,"jie.gomemyf.com");
         }else {
-            ActivityUtil.goForward(me,WebViewActivity.class,bundle,true);
+            ActivityUtil.goForward(me,WebViewActivity.class,bundle,false);
         }
 
-
-
-
     }
+
 
     /**
      * 数据埋点
@@ -155,7 +155,6 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         //设备厂商
         String carrier = android.os.Build.MANUFACTURER;
 
-
         Map<String, String> params = new HashMap<String, String>();
         params.put("productId", sId);
         params.put("deviceNumber", model + "(" + carrier + ")");
@@ -165,7 +164,8 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         JSONObject jsonObj=new JSONObject(params);
         G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_APPLY_LOAN,jsonObj,POST_APPLY);
 
-
     }
+
+
 
 }

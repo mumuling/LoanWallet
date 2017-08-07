@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     style="@style/MatchMatch.Vertical">
 
     <include layout="@layout/topview"/>
@@ -29,7 +30,7 @@
                     style="@style/WrapWrap"
                     android:layout_marginTop="10dp"
                     android:layout_toRightOf="@+id/iv_product"
-                    android:text="产品名称"
+                    tools:text="产品名称"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     />
@@ -40,7 +41,7 @@
                     android:layout_below="@+id/tv_title"
                     android:layout_marginTop="8dp"
                     android:layout_toRightOf="@+id/iv_product"
-                    android:text="额度范围"/>
+                    tools:text="额度范围"/>
 
                 <TextView
                     android:id="@+id/tv_time"
@@ -48,7 +49,7 @@
                     android:layout_below="@+id/tv_quota"
                     android:layout_marginTop="5dp"
                     android:layout_toRightOf="@+id/iv_product"
-                    android:text="期限范围"/>
+                    tools:text="额度期限"/>
 
                 <TextView
                     android:id="@+id/tv_speed"
@@ -56,7 +57,7 @@
                     android:layout_below="@+id/tv_time"
                     android:layout_marginTop="5dp"
                     android:layout_toRightOf="@+id/iv_product"
-                    android:text="最快放款"/>
+                    tools:text="最快放款"/>
             </RelativeLayout>
 
             <include layout="@layout/line_vertical_1px_fragment4"/>
@@ -87,7 +88,8 @@
                     android:layout_below="@+id/tv1"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/iv1"
-                    android:text="利率说明1231231321321"/>
+                    tools:text="利率说明1231231321321"/>
+
             </RelativeLayout>
 
             <!--申请流程-->
@@ -116,7 +118,7 @@
                     android:layout_below="@+id/tv2"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/iv2"
-                    android:text="利率说明1231231321321"
+                    tools:text="利率说明1231231321321"
                     android:textColor="@color/black"/>
             </RelativeLayout>
 
@@ -147,7 +149,7 @@
                     android:layout_below="@+id/tv3"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/iv3"
-                    android:text="利率说明1231231321321"/>
+                    tools:text="利率说明1231231321321"/>
 
             </RelativeLayout>
 
@@ -178,7 +180,7 @@
                     android:layout_below="@+id/tv4"
                     android:layout_marginTop="6dp"
                     android:layout_toRightOf="@+id/iv4"
-                    android:text="利率说明1231231321321"/>
+                    tools:text="利率说明1231231321321"/>
 
             </RelativeLayout>
 

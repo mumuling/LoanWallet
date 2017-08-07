@@ -1,7 +1,5 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment4;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -9,14 +7,19 @@ import android.widget.TextView;
 
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseFragment;
+import com.pingxun.daishangqianbao.other.EventMessage;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
-import com.pingxun.daishangqianbao.ui.view.DialogPopupView;
+import com.pingxun.daishangqianbao.ui.view.F4DialogPopupView;
 import com.pingxun.daishangqianbao.ui.view.XCRoundImageView;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.AppUtils;
 import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -41,6 +44,7 @@ public class Fragment4 extends BaseFragment {
 
     @Override
     protected int getRootLayoutResID() {
+        EventBus.getDefault().register(this);//绑定事件接受
         return R.layout.fragment_4;
     }
 
@@ -75,8 +79,9 @@ public class Fragment4 extends BaseFragment {
 
                 break;
             case R.id.mine_contact_us://联系我们
-                DialogPopupView dialogPopupView=new DialogPopupView(mActivity);
-                dialogPopupView.showPopupWindow();
+                F4DialogPopupView f4DialogPopupView =new F4DialogPopupView(mActivity);
+                f4DialogPopupView.setPopupWindowFullScreen(true);
+                f4DialogPopupView.showPopupWindow();
                 break;
             case R.id.mine_version://版本号
 
@@ -86,6 +91,26 @@ public class Fragment4 extends BaseFragment {
 
 
                 break;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);//注销事件接受
+    }
+
+    //    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        EventBus.getDefault().unregister(this);//注销事件接受
+//
+//    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void helloEventBus(EventMessage message) {
+        if (message.message.equals("update_UserName")) {
+            mTvName.setText(SharedPrefsUtil.getValue(mActivity,InitDatas.SP_NAME,InitDatas.UserPhone,"未登录"));
         }
     }
 }

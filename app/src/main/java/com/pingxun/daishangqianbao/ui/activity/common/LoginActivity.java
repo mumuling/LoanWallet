@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.data.LoginBean;
+import com.pingxun.daishangqianbao.other.EventMessage;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
@@ -18,6 +19,7 @@ import com.pingxun.daishangqianbao.utils.MyTools;
 import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -156,6 +158,7 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
                      SharedPrefsUtil.putValue(me,InitDatas.SP_NAME,InitDatas.UserPhone,sPhone);
                      SharedPrefsUtil.putValue(me,InitDatas.SP_NAME,InitDatas.UserPw,sCode);
                      SharedPrefsUtil.putValue(me,InitDatas.SP_NAME,InitDatas.UserIsLogin,true);
+                     EventBus.getDefault().post(new EventMessage("update_UserName"));//event更新用户名
                      closeActivtiy();
                      break;
                  }

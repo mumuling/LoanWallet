@@ -1,5 +1,6 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment1;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,17 +13,27 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
 import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
+import com.pingxun.daishangqianbao.adapter.F1_Bank_RecyclerViewAdapter;
+import com.pingxun.daishangqianbao.adapter.F1_Recommend_RecyclerViewAdapter;
 import com.pingxun.daishangqianbao.adapter.F1_Type_RecyclerViewAdapter;
 import com.pingxun.daishangqianbao.base.BaseFragment;
+import com.pingxun.daishangqianbao.data.BankListBean;
 import com.pingxun.daishangqianbao.data.BannerBean;
+import com.pingxun.daishangqianbao.data.F1ProductRecommendBean;
 import com.pingxun.daishangqianbao.data.F1ProductTypeBean;
 import com.pingxun.daishangqianbao.other.G_api;
+import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
+import com.pingxun.daishangqianbao.ui.activity.other.ProductInfoActivity;
+import com.pingxun.daishangqianbao.ui.activity.other.ProductListActivity;
+import com.pingxun.daishangqianbao.ui.activity.other.WebViewActivity;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
+import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +58,6 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     private static final int GET_PRODUCT_TYPE = 3;
     private static final int GET_CREDIT_CARD = 4;
 
-
     @BindView(R.id.banner)
     BGABanner mBanner;//轮播图
     @BindView(R.id.rb_dydk)
@@ -67,11 +77,12 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     @BindView(R.id.rv3)
     RecyclerView mRv3;//办卡专区
 
-    private F1_Type_RecyclerViewAdapter mTypeAdapter;
+    private F1_Type_RecyclerViewAdapter mTypeAdapter;//产品分类adapter
+    private F1_Bank_RecyclerViewAdapter mF1_bank_recyclerViewAdapter;//办卡专区adapter
+    private F1_Recommend_RecyclerViewAdapter mF1_recommend_recyclerViewAdapter;//产品推荐adapter
     private List<F1ProductTypeBean.DataBean> mTypeList;
-
-
-
+    private List<BankListBean.DataBean> mBankList;
+    private List<F1ProductRecommendBean.DataBean> mRecommendList;
 
 
     @Override
@@ -93,74 +104,71 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rb_dydk://抵押
-
+                goList("diyaloan");
                 break;
             case R.id.rb_gxdk://工薪
-
+                goList("salaryloan");
                 break;
             case R.id.rb_xydk://信用
-
+                goList("creditcardloan");
                 break;
             case R.id.rb_xesd://小额
-
+                goList("xiaoejishuloan");
                 break;
         }
     }
 
     private void initAdapter() {
-        mTypeAdapter = new F1_Type_RecyclerViewAdapter(R.layout.rv_item_f1_product_type, mTypeList);
-     //   mCardAdapter =new F3_Card_RecyclerViewAdapter(R.layout.rv_item_credit_card,mCardList);
 
+        //===============================初始化产品分类adapter=========================================//
+        mTypeAdapter = new F1_Type_RecyclerViewAdapter(R.layout.rv_item_f1_product_type, mTypeList);
         mRv1.setHasFixedSize(true);
         mRv1.setLayoutManager(new GridLayoutManager(getContext(), 2));
         mRv1.setAdapter(mTypeAdapter);
         mRv1.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
-            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-            }
-
+            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {}
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ToastUtils.showToast(mActivity, mTypeList.get(position).getName());
-//                Bundle bundle=new Bundle();
-//                bundle.putString(InitDatas.PROUDUCT_ID,String.valueOf(mListBean.get(position).getId()));
-//                ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
+                ToastUtils.showToast(mActivity,mTypeList.get(position).getCode());
+                goList(mTypeList.get(position).getCode());
             }
         });
 
+
+       //===============================初始化产品推荐adapter=========================================//
+        mF1_recommend_recyclerViewAdapter = new F1_Recommend_RecyclerViewAdapter(R.layout.rv_item_f1_product_recommend, mRecommendList);
+        mRv2.setHasFixedSize(true);
+        mRv2.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        mRv2.setAdapter(mF1_recommend_recyclerViewAdapter);
+        mRv2.addOnItemTouchListener(new OnItemChildClickListener() {
+            @Override
+            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {}
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                isLogin(String.valueOf(mRecommendList.get(position).getId()));
+            }
+        });
+
+
+        //===============================初始化办卡专区adapter=========================================//
+        mF1_bank_recyclerViewAdapter = new F1_Bank_RecyclerViewAdapter(R.layout.rv_item_f1_card_recommend, mBankList);
+        mRv3.setHasFixedSize(true);
+        mRv3.setLayoutManager(new GridLayoutManager(getContext(), 3));
+        mRv3.setAdapter(mF1_bank_recyclerViewAdapter);
+        mRv3.addOnItemTouchListener(new OnItemChildClickListener() {
+            @Override
+            public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {}
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    goWebView(mBankList.get(position).getUrl(),mBankList.get(position).getName());
+            }
+        });
+
+
     }
 
-    /**
-     * 信用卡推荐
-     */
-    private void getCreditCard() {
-        Map<String, String> params = new HashMap<>();
-        params.put("flag", "推荐银行");
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_FINDBANK_BY_POSITION, mActivity, params, GET_CREDIT_CARD);
-    }
 
-    /**
-     * 产品分类
-     */
-    private void getProductType() {
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_TYPE,null, GET_PRODUCT_TYPE);
-    }
-
-    /**
-     * 获取产品推荐
-     */
-    private void getProductRecommend() {
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_RECOMMEND,null, GET_PRODUCT_RECOMMEND);
-    }
-
-    /**
-     * 获取Banner
-     */
-    private void getBanner() {
-        Map<String, String> params = new HashMap<>();
-        params.put("position", "dsqb_android_center");
-        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_BANNER, params, GET_BANNER);
-    }
 
 
     @Override
@@ -168,7 +176,6 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
         switch (flag) {
 
             case GET_BANNER://获取Banner回调
-                Logger.json(jsonStr);
                 BannerBean mBannerBean = Convert.fromJson(jsonStr, BannerBean.class);
                 if (mBannerBean == null || !mBannerBean.isSuccess()) {
                     ToastUtils.showToast(mActivity, "获取Banner失败!");
@@ -181,25 +188,56 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
                 break;
 
             case GET_PRODUCT_RECOMMEND://产品推荐回调
-                Logger.json(jsonStr);
+
+                F1ProductRecommendBean f1ProductRecommendBean=Convert.fromJson(jsonStr,F1ProductRecommendBean.class);
+                if (f1ProductRecommendBean==null||!f1ProductRecommendBean.isSuccess()){
+                    ToastUtils.showToast(mActivity,"获取产品推荐失败");
+                    return;
+                }
+                if (f1ProductRecommendBean.isSuccess()){
+                    mRecommendList = f1ProductRecommendBean.getData();
+                    if (mRecommendList.size()>=3){
+                        mF1_recommend_recyclerViewAdapter.setNewData(mRecommendList.subList(0,3));//只取前三条数据
+                    }else {
+                        mF1_recommend_recyclerViewAdapter.setNewData(mRecommendList);//只取前三条数据
+                    }
+                }
+
                 break;
 
 
             case GET_PRODUCT_TYPE://产品分类回调
-                F1ProductTypeBean mBean=Convert.fromJson(jsonStr,F1ProductTypeBean.class);
-                if (mBean==null || !mBean.isSuccess()){
+                F1ProductTypeBean mProductTypeBean=Convert.fromJson(jsonStr,F1ProductTypeBean.class);
+                if (mProductTypeBean==null || !mProductTypeBean.isSuccess()){
                     ToastUtils.showToast(mActivity,"获取产品分类失败");
                     return;
                 }
-                if (mBean.isSuccess()){
-                    mTypeList = mBean.getData();
-                    mTypeAdapter.setNewData(mTypeList);
+                if (mProductTypeBean.isSuccess()){
+                    mTypeList = mProductTypeBean.getData();
+                    if (mTypeList.size()>=4){
+                        mTypeAdapter.setNewData(mTypeList.subList(0,4));
+                    }else {
+                        mTypeAdapter.setNewData(mTypeList);
+                    }
                 }
                 break;
 
             case GET_CREDIT_CARD://信用卡推荐回调
 
-//              Logger.json(jsonStr);
+
+                BankListBean mBankBean = Convert.fromJson(jsonStr, BankListBean.class);
+                if (mBankBean == null || !mBankBean.isSuccess()) {
+                    ToastUtils.showToast(mActivity, "获取银行失败");
+                    return;
+                }
+                if (mBankBean.isSuccess()) {
+                    mBankList = mBankBean.getData();
+                    if (mBankList.size()>=3){
+                        mF1_bank_recyclerViewAdapter.setNewData(mBankList.subList(0,3));//只取前三条数据
+                    }else {
+                        mF1_bank_recyclerViewAdapter.setNewData(mBankList);
+                    }
+                }
                 break;
 
 
@@ -235,6 +273,46 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
         mBanner.setAdapter(Fragment1.this);
     }
 
+    /**
+     * 判断是否登录，登录了才能跳转到产品详情界面
+     * @param sId
+     */
+    private void isLogin(String sId){
+        if (!SharedPrefsUtil.getValue(mActivity, InitDatas.SP_NAME,InitDatas.UserIsLogin,false)){
+            ActivityUtil.goForward(mActivity, LoginActivity.class,null,false);
+        }else {
+            Bundle bundle=new Bundle();
+            bundle.putString(InitDatas.PROUDUCT_ID,sId);
+            ActivityUtil.goForward(mActivity,ProductInfoActivity.class,bundle,false);
+        }
+    }
+
+    /**
+     * 跳转到webView
+     * @param url url
+     * @param name 产品名称
+     */
+    private void goWebView(String url, String name) {
+        Bundle bundle=new Bundle();
+        bundle.putString("url", url);
+        bundle.putString("productName", name);
+        if (url.contains("jie.gomemyf.com")){
+            ToastUtils.showToast(mActivity,"jie.gomemyf.com");
+        }else {
+            ActivityUtil.goForward(mActivity,WebViewActivity.class,bundle,false);
+        }
+    }
+
+    /**
+     * 跳转到产品列表界面
+     * @param sId loanType
+     */
+    private void goList(String sId) {
+        Bundle bundle=new Bundle();
+        bundle.putString(InitDatas.PROUDUCT_TYPE_ID,sId);
+        ActivityUtil.goForward(mActivity, ProductListActivity.class, bundle, false);
+    }
+
 
     @Override
     public void fillBannerItem(BGABanner banner, ImageView itemView, String model, int position) {
@@ -265,7 +343,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
                         getBanner();
                         getProductRecommend();
                         getProductType();
-//                        getCreditCard();
+                        getCreditCard();
                         mSwipeLayout.setRefreshing(false);
                     }
                 });
@@ -273,5 +351,34 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     }
 
 
+
+    /**
+     * 信用卡推荐
+     */
+    private void getCreditCard() {
+        Map<String, String> params = new HashMap<>();
+        params.put("flag", "2");
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_FIND_BANK_BY_POSITION, params, GET_CREDIT_CARD);
+    }
+    /**
+     * 产品分类
+     */
+    private void getProductType() {
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_TYPE,null, GET_PRODUCT_TYPE);
+    }
+    /**
+     * 获取产品推荐
+     */
+    private void getProductRecommend() {
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_PRODUCT_RECOMMEND,null, GET_PRODUCT_RECOMMEND);
+    }
+    /**
+     * 获取Banner
+     */
+    private void getBanner() {
+        Map<String, String> params = new HashMap<>();
+        params.put("position", "dsqb_android_center");
+        G_api.getInstance().setHandleInterface(Fragment1.this).getRequest(Urls.URL_GET_BANNER, params, GET_BANNER);
+    }
 
 }

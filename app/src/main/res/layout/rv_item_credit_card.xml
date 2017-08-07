@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 style="@style/MatchWrap"
                 android:background="@color/white"
                 android:paddingTop="10dp">
@@ -8,6 +9,7 @@
         android:id="@+id/iv"
         android:layout_width="80dp"
         android:layout_height="60dp"
+        android:scaleType="fitXY"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="14dp"/>
 
@@ -15,7 +17,7 @@
         android:id="@+id/tv_title"
         style="@style/WrapWrap"
         android:layout_toRightOf="@+id/iv"
-        android:text="标题"
+        tools:text="标题"
         android:textColor="@color/black"/>
 
     <TextView
@@ -28,7 +30,7 @@
         android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:lines="2"
-        android:text="副标题1111111111111111111111111111111111111111111111111111111111111"
+        tools:text="副标题"
         android:textSize="12sp"/>
 
     <TextView
@@ -37,7 +39,7 @@
         android:layout_below="@+id/tv_sub_title"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/iv"
-        android:text="申请人数"
+        tools:text="申请人数"
         android:textSize="12sp"/>
 
 

@@ -32,6 +32,23 @@
     <!-- 电话服务添加 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <!--高德-->
+    <!-- 设置key -->
+    <meta-data
+        android:name="com.amap.api.v2.apikey"
+        android:value="375fcbc99d25b559369e1c84ef5161b1" />
+    <!-- 定位需要的服务 -->
+    <!--<service-->
+        <!--android:name=".service.AMapLocationService"-->
+        <!--android:enabled="true"-->
+        <!--android:exported="true">-->
+        <!--<intent-filter android:priority="1000">-->
+            <!--<action android:name="com.pingxun.daishangqianbao.service.AMapLocationService" />-->
+        <!--</intent-filter>-->
+    <!--</service>-->
+    <service android:name="com.amap.api.location.APSService" />
+
+
     <application
         android:name=".base.App"
         android:allowBackup="true"
@@ -47,6 +64,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".service.LoginService"
+                 android:enabled="true"
+                 android:exported="true"/>
         <activity android:name=".ui.activity.other.ProductListActivity" />
         <activity android:name=".ui.activity.other.ProductInfoActivity" />
         <activity android:name=".ui.activity.common.LoginActivity" />
@@ -60,6 +81,8 @@
 
         </activity>
         <activity android:name=".ui.activity.common.GuidActivity" />
+
+
     </application>
 
 </manifest>

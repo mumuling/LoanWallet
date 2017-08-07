@@ -159,5 +159,4 @@ public class ActivityUtil {
         android.os.Process.killProcess(android.os.Process.myTid());
     }
 
-
 }

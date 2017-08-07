@@ -8,7 +8,7 @@ public class Urls {
     //GET接口
     //"https://119.23.64.92/"外网
     //"https://192.168.1.100:1234/"内网
-    public static final String SERVER = "https://119.23.64.92/";
+    public static final String SERVER = "https://192.168.1.100:1234/";
     public static final String URL_GET_BANNER=SERVER+"common/findBanner.json";//获取Banner
     public static final String URL_GET_PRODUCT_RECOMMEND=SERVER+"front/product/findRecommendProduct.json";//获取产品推荐
     public static final String URL_GET_PRODUCT_TYPE=SERVER+"front/product/findProductType.json";//产品分类(用钱不必等那一栏)
@@ -27,5 +27,6 @@ public class Urls {
     public static final String URL_POST_FIND_BY_CONDITION_CARD=SERVER+"front/creditCard/findByCondition.json";//查询信用卡列表服务
     public static final String URL_POST_APPLY_LOAN=SERVER+"front/product/applyLoan.json";//立即申请产品
     public static final String URL_POST_FIND_APPLY_LIST=SERVER+"front/product/findApplyList.json";//获取申请列表
+    public static final String URL_POST_IS_APPLY=SERVER+"front/product/applyInvestigation.json";//产品申请调查接口
 
 }

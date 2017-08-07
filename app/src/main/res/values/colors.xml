@@ -11,6 +11,7 @@
 
     <color name="blue">#119EFA</color>
     <color name="mainColor">#F2F2F2</color>
+    <color name="f1_type_bg">#F3F3F3</color><!--首页产品分类的背景色-->
 
 
     <!--pickerview-->

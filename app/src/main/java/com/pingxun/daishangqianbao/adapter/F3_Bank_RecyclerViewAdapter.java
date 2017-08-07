@@ -1,9 +1,12 @@
 package com.pingxun.daishangqianbao.adapter;
 
+import android.widget.ImageView;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.data.BankListBean;
+import com.pingxun.daishangqianbao.utils.GlideImgManager;
 
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class F3_Bank_RecyclerViewAdapter extends BaseQuickAdapter<BankListBean.D
     }
     @Override
     protected void convert(BaseViewHolder helper, BankListBean.DataBean item) {
-              helper.setText(R.id.tv_icon,item.getName());
+        GlideImgManager.glideLoader(mContext,item.getIcon(),R.mipmap.tu_jiazai,R.mipmap.tu_jiazai,(ImageView) helper.getView(R.id.iv_icon),1);
+        helper.setText(R.id.tv_icon,item.getName());
     }
 }

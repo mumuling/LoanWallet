@@ -159,6 +159,7 @@ public class InitDatas {
     public static String DATECYCLE="dateCycle";
     public static String AMOUNT="amount";
     public static String PROUDUCT_ID="id";//产品ID
+    public static String PROUDUCT_TYPE_ID="prouduct_type_id";//产品类型id(产品超市列表会用到)
 
     /**
      * 渠道编号

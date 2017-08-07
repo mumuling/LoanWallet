@@ -65,6 +65,16 @@ public class F1ProductTypeBean {
         private String description;
         private String img;
 
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        private String code;
+
         public int getId() {
             return id;
         }

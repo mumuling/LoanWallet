@@ -25,9 +25,11 @@ import com.pingxun.daishangqianbao.data.ProductListBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
 import com.pingxun.daishangqianbao.ui.view.ListPopup;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
+import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 import com.pingxun.daishangqianbao.utils.VerticalItemDecoration;
 
@@ -82,6 +84,8 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     private ListPopup mTypeListPopup;
     private RotateAnimation showArrowAnima;
     private RotateAnimation dismissArrowAnima;
+
+    private String sTypeId="";
     @Override
     protected int getLayoutId() {
         return R.layout.activity_product_list;
@@ -90,6 +94,10 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     @Override
     protected void initData() {
         initTopView("产品超市");
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            sTypeId = bundle.getString(InitDatas.PROUDUCT_TYPE_ID);
+        }
         buildShowArrowAnima();
         buildDismissArrowAnima();
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
@@ -138,9 +146,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Bundle bundle=new Bundle();
-                bundle.putString(InitDatas.PROUDUCT_ID,String.valueOf(mListBean.get(position).getId()));
-                ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
+                isLogin(String.valueOf(mListBean.get(position).getId()));
             }
         });
 
@@ -151,6 +157,22 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             }
         });
 
+    }
+
+
+
+    /**
+     * 判断是否登录，登录了才能跳转到产品详情界面
+     * @param sId
+     */
+    private void isLogin(String sId){
+        if (!SharedPrefsUtil.getValue(me, InitDatas.SP_NAME,InitDatas.UserIsLogin,false)){
+            ActivityUtil.goForward(me, LoginActivity.class,null,false);
+        }else {
+            Bundle bundle=new Bundle();
+            bundle.putString(InitDatas.PROUDUCT_ID,sId);
+            ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
+        }
     }
 
     /**
@@ -339,7 +361,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                 .subscribe(new Action1<Long>() {
                     @Override
                     public void call(Long aLong) {
-                        postProductSearch();
+                        postProductSearch(sTypeId);
                         getAmount();
                         getPeriod();
                         getType();
@@ -386,12 +408,14 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
     /**
      * 产品搜索
+     * @param sTypeId
      */
-    private void postProductSearch() {
+    private void postProductSearch(String sTypeId) {
         HashMap<String, String> params = new HashMap<>();
         params.put("period", "");//期限
         params.put("dateCycle", "");//期限周期
         params.put("amount", "");//借款金额
+        params.put("loanType",sTypeId);
         params.put("channelNo", InitDatas.CHANNEL_NO);//渠道类型：ios,android,wechat
         params.put("appName", InitDatas.APP_NAME);
         JSONObject jsonObject = new JSONObject(params);

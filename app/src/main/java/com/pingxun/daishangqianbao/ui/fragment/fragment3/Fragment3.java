@@ -1,5 +1,6 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment3;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,9 +18,10 @@ import com.pingxun.daishangqianbao.data.BankListBean;
 import com.pingxun.daishangqianbao.data.F3CardListBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.ui.activity.other.WebViewActivity;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
-import com.pingxun.daishangqianbao.utils.VerticalItemDecoration;
 
 import org.json.JSONObject;
 
@@ -67,28 +69,12 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
         mTvTopviewTitle.setText("信用卡");
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
-
-        onRefresh();
         initAdapter();
+        onRefresh();
 
     }
 
-    @Override
-    public void onRefresh() {
 
-        mSwipeLayout.setRefreshing(true);
-
-        Observable.timer(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        getBank();
-                        getCard();
-                        mSwipeLayout.setRefreshing(false);
-                    }
-                });
-    }
 
 
     private void initAdapter() {
@@ -105,16 +91,12 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ToastUtils.showToast(mActivity, mBankList.get(position).getName());
-//                Bundle bundle=new Bundle();
-//                bundle.putString(InitDatas.PROUDUCT_ID,String.valueOf(mListBean.get(position).getId()));
-//                ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
+                goWebView(mBankList.get(position).getUrl(),mBankList.get(position).getName());
             }
         });
 
         mRv2.setHasFixedSize(true);
         mRv2.setLayoutManager(new LinearLayoutManager(mActivity));
-//        mRv2.addItemDecoration(new VerticalItemDecoration(mActivity, 1));
         mRv2.setAdapter(mCardAdapter);
         mRv2.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
@@ -123,10 +105,76 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                ToastUtils.showToast(mActivity, mCardList.get(position).getName());
-
+                goWebView(mCardList.get(position).getUrl(),mCardList.get(position).getName());
             }
         });
+    }
+
+    /**
+     * 跳转到webView
+     * @param url url
+     * @param name 产品名称
+     */
+    private void goWebView(String url, String name) {
+        Bundle bundle=new Bundle();
+        bundle.putString("url", url);
+        bundle.putString("productName", name);
+        if (url.contains("jie.gomemyf.com")){
+            ToastUtils.showToast(mActivity,"jie.gomemyf.com");
+        }else {
+            ActivityUtil.goForward(mActivity,WebViewActivity.class,bundle,false);
+        }
+    }
+
+
+    @Override
+    public void onResult(String jsonStr, int flag) {
+        switch (flag) {
+            case GET_BANK://获取所有银行回调
+                BankListBean mBankBean = Convert.fromJson(jsonStr, BankListBean.class);
+                if (mBankBean == null || !mBankBean.isSuccess()) {
+                    ToastUtils.showToast(mActivity, "获取银行失败");
+                    return;
+                }
+                if (mBankBean.isSuccess()) {
+                    mBankList = mBankBean.getData();
+                    mBankAdapter.setNewData(mBankList);
+                }
+                break;
+            case GET_CARD://获取推荐信用卡回调
+                F3CardListBean mCardBean=Convert.fromJson(jsonStr,F3CardListBean.class);
+
+                if(mCardBean==null||!mCardBean.isSuccess()){
+                    ToastUtils.showToast(mActivity, "获取信用卡列表失败");
+                    return;}
+                if (mCardBean.isSuccess()){
+                    mCardList = mCardBean.getData().getContent();
+                    mCardAdapter.setNewData(mCardList);
+                }
+                break;
+        }
+    }
+
+
+    @Override
+    public void onError(int flag) {
+
+    }
+
+
+    @Override
+    public void onRefresh() {
+        mSwipeLayout.setRefreshing(true);
+        Observable.timer(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        getBank();
+                        getCard();
+                        mSwipeLayout.setRefreshing(false);
+                    }
+                });
     }
 
 
@@ -147,42 +195,6 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
         params.put("pageNo", "1");
         JSONObject jsonObject = new JSONObject(params);
         G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION_CARD, jsonObject, GET_CARD);
-
-    }
-
-    @Override
-    public void onResult(String jsonStr, int flag) {
-        switch (flag) {
-            case GET_BANK://获取所有银行回调
-                BankListBean mBankBean = Convert.fromJson(jsonStr, BankListBean.class);
-                if (mBankBean == null || !mBankBean.isSuccess()) {
-                    ToastUtils.showToast(mActivity, "获取银行失败");
-                    return;
-                }
-                if (mBankBean.isSuccess()) {
-                    mBankList = mBankBean.getData();
-                    mBankAdapter.setNewData(mBankList);
-                }
-
-                break;
-            case GET_CARD://获取推荐信用卡回调
-                F3CardListBean mCardBean=Convert.fromJson(jsonStr,F3CardListBean.class);
-
-                if(mCardBean==null||!mCardBean.isSuccess()){
-                    ToastUtils.showToast(mActivity, "获取信用卡列表失败");
-                    return;}
-                if (mCardBean.isSuccess()){
-                    mCardList = mCardBean.getData().getContent();
-                    mCardAdapter.setNewData(mCardList);
-                }
-
-                break;
-
-        }
-    }
-
-    @Override
-    public void onError(int flag) {
 
     }
 }
