@@ -1,13 +1,10 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment2;
 
 
-import android.os.Bundle;
 import android.support.annotation.UiThread;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -15,7 +12,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bigkoo.pickerview.OptionsPickerView;
-import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseFragment;
 import com.pingxun.daishangqianbao.data.F2JobDataBean;
@@ -24,22 +20,25 @@ import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
 import com.pingxun.daishangqianbao.ui.activity.other.ProductListActivity;
+import com.pingxun.daishangqianbao.ui.view.EmptyLayout;
 import com.pingxun.daishangqianbao.ui.view.RulerView;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
+import com.pingxun.daishangqianbao.utils.NetUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
-
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Unbinder;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 
 /**
@@ -47,7 +46,7 @@ import butterknife.Unbinder;
  * 精准主页
  */
 
-public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
+public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.tv_total_money)
@@ -73,6 +72,12 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
     RulerView rulerView;
     @BindView(R.id.tv_job)
     TextView tvJob;
+    @BindView(R.id.parent_view)
+    LinearLayout mParentView;
+    @BindView(R.id.swipeLayout)
+    SwipeRefreshLayout mSwipeLayout;
+    @BindView(R.id.empty_layout)
+    EmptyLayout mEmptyLayout;
 
 
 
@@ -84,7 +89,7 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
     private static final int URL_GET_FIND_PARAMETER = 5;//获取贷款参数标识
     private static final int URL_GET_FIND_BY_TYPE = 6;//获取职业标识
     private ArrayList<String> stringArrayList;
-    private AlertDialog alertDialog;
+
     private OptionsPickerView optionsPickerView;
 
 
@@ -95,11 +100,13 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
 
     @Override
     protected void initData() {
-        getParameter();
-        getJobData();
+        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
+        mSwipeLayout.setOnRefreshListener(this);
+        rulerView.setValue(13000.0f, 0.0f, 200000.0f, 1000.0f);//设置选中值、最小值、最大值、单位值
+        onRefresh();
     }
 
-    @OnClick({R.id.btn_day_or_month, R.id.lin_job_choose, R.id.btn_search})
+    @OnClick({R.id.btn_day_or_month, R.id.lin_job_choose, R.id.btn_search,R.id.empty_layout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_day_or_month://切换还款单位
@@ -121,7 +128,7 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
                 optionsPickerView = new OptionsPickerView.Builder(mActivity, new OptionsPickerView.OnOptionsSelectListener() {
                     @Override
                     public void onOptionsSelect(int options1, int options2, int options3, View v) {
-                          tvJob.setText( stringArrayList.get(options1));
+                        tvJob.setText(stringArrayList.get(options1));
                     }
                 }).build();
                 optionsPickerView.setPicker(stringArrayList);
@@ -132,14 +139,18 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
                 Log.e("期限周期==>>", cycleStr);
                 Log.e("借款金额==>>", InitDatas.loanAmount + "");
 
-//                HashMap<String, String> params = new HashMap<>();
-//                params.put("period", InitDatas.loanDate+"");//期限
-//                params.put("dateCycle", cycleStr);//期限周期
-//                params.put("amount", InitDatas.loanAmount + "");//借款金额
-//                params.put("channelNo", "android");//渠道类型：ios,android,wechat
-//                params.put("appName", InitDatas.APP_NAME);
+//              HashMap<String, String> params = new HashMap<>();
+//              params.put("period", InitDatas.loanDate+"");//期限
+//              params.put("dateCycle", cycleStr);//期限周期
+//              params.put("amount", InitDatas.loanAmount + "");//借款金额
+//              params.put("channelNo", "android");//渠道类型：ios,android,wechat
+//              params.put("appName", InitDatas.APP_NAME);
 
                 ActivityUtil.goForward(mActivity, ProductListActivity.class, null, false);
+                break;
+            case R.id.empty_layout:
+                mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
+                onRefresh();
                 break;
         }
     }
@@ -147,34 +158,17 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
 
 
 
-    /**
-     * 获取职业集合
-     */
-    private void getJobData() {
-        Map<String, String> map = new HashMap<>();
-        map.put("type", "job");
-        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_BY_TYPE, mActivity, map, URL_GET_FIND_BY_TYPE);
-    }
-
-    /**
-     * 获取贷款参数
-     */
-    private void getParameter() {
-        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_PARAMETER, mActivity, null, URL_GET_FIND_PARAMETER);
-    }
-
-
     @Override
     public void onResult(String jsonStr, int flag) {
+        mEmptyLayout.setErrorType(EmptyLayout.NO_ERROR);
+        mParentView.setVisibility(View.VISIBLE);
         switch (flag) {
-
             case URL_GET_FIND_PARAMETER://获取贷款参数
                 F2ParamBean mF2ParamBean = Convert.fromJson(jsonStr, F2ParamBean.class);
                 if (mF2ParamBean == null || !mF2ParamBean.isSuccess()) {
                     ToastUtils.showToast(mActivity, "获取贷款参数失败!");
                     return;
                 }
-
                 if (mF2ParamBean.isSuccess()) {
                     // 贷款最低金额
                     InitDatas.limitLowAmount = new BigDecimal(mF2ParamBean.getData().getStartAmount() + "").intValue();
@@ -194,15 +188,15 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
                     InitDatas.rateDay = InitDatas.rateYear.divide(new BigDecimal(100)).divide(new BigDecimal(360));
                     //月利率
                     InitDatas.rateMounth = InitDatas.rateDay.multiply(new BigDecimal(30));
-                    Log.e("贷款最低金额==>>", InitDatas.limitLowAmount + "");
-                    Log.e("贷款最高金额==>>", InitDatas.limitHeightAmount + "");
-                    Log.e("日 单位 起始==>>", InitDatas.dayStart);
-                    Log.e("日 单位 结束==>>", InitDatas.dayEnd);
-                    Log.e("月 单位 开始==>>", InitDatas.mounthStart);
-                    Log.e("月 单位 结束==>>", InitDatas.mounthEnd);
-                    Log.e("年利率==>>", String.valueOf(InitDatas.rateYear));
-                    Log.e("日利率==>>", String.valueOf(InitDatas.rateDay));
-                    Log.e("月利率==>>", String.valueOf(InitDatas.rateMounth));
+//                    Log.e("贷款最低金额==>>", InitDatas.limitLowAmount + "");
+//                    Log.e("贷款最高金额==>>", InitDatas.limitHeightAmount + "");
+//                    Log.e("日 单位 起始==>>", InitDatas.dayStart);
+//                    Log.e("日 单位 结束==>>", InitDatas.dayEnd);
+//                    Log.e("月 单位 开始==>>", InitDatas.mounthStart);
+//                    Log.e("月 单位 结束==>>", InitDatas.mounthEnd);
+//                    Log.e("年利率==>>", String.valueOf(InitDatas.rateYear));
+//                    Log.e("日利率==>>", String.valueOf(InitDatas.rateDay));
+//                    Log.e("月利率==>>", String.valueOf(InitDatas.rateMounth));
                     runinUI(InitDatas.loanDate);
                 }
                 break;
@@ -213,7 +207,6 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
                     ToastUtils.showToast(mActivity, "获取职业失败!");
                     return;
                 }
-
                 if (mBean.isSuccess()) {
                     List<F2JobDataBean.DataBean> mList = mBean.getData();
                     stringArrayList = new ArrayList<>();
@@ -228,8 +221,9 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
 
     @Override
     public void onError(int flag) {
-        Logger.e("错误回调==>>", flag);
-
+        if (NetUtil.getNetWorkState(mActivity)==-1){
+            mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
+        }
     }
 
     /**
@@ -238,7 +232,7 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
      * @param loanDate 贷款期限
      */
     private void runinUI(int loanDate) {
-        rulerView.setValue(13000.0f, 0.0f, 200000.0f, 1000.0f);//设置选中值、最小值、最大值、单位值
+
         tvStartTime.setText(InitDatas.dayStart);
         tvEndTime.setText(InitDatas.dayEnd);
         tvTotalMoney.setText("￥ " + rulerView.getCurrLocation());
@@ -347,5 +341,40 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler {
     }
 
 
+    @Override
+    public void onRefresh() {
+        mSwipeLayout.setRefreshing(true);
+        Observable.timer(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        getParameter();
+                        getJobData();
+                        btnDayOrMonth.setBackgroundResource(R.mipmap.icon_date_day);
+                        InitDatas.loanUnit=0;
+                        seekBar.setProgress(0);
+                        runinUI(0);
+                        mSwipeLayout.setRefreshing(false);
+                    }
+                });
 
+    }
+
+
+    /**
+     * 获取职业集合
+     */
+    private void getJobData() {
+        Map<String, String> map = new HashMap<>();
+        map.put("type", "job");
+        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, URL_GET_FIND_BY_TYPE);
+    }
+
+    /**
+     * 获取贷款参数
+     */
+    private void getParameter() {
+        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_PARAMETER,null, URL_GET_FIND_PARAMETER);
+    }
 }

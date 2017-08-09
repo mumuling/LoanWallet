@@ -13,6 +13,7 @@ import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
 import com.pingxun.daishangqianbao.ui.view.XEditText;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
 import com.pingxun.daishangqianbao.utils.CountDownUtil;
 import com.pingxun.daishangqianbao.utils.MyTools;
@@ -68,12 +69,13 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
                     return;
                 }
                 if (!MyTools.isMobileNO(sPhone)) {
-                    ToastUtils.showToast(mApp, "输入的手机格式不正确");
+                    ToastUtils.showToast(me, "输入的手机格式不正确");
                     return;
                 }
                 HashMap<String, String> params = new HashMap<>();
                 params.put("phone", sPhone);
                 params.put("channelNo", InitDatas.CHANNEL_NO);
+                params.put("applyArea", InitDatas.sLocation.getLatitude() + "；" + InitDatas.sLocation.getLongitude());
                 params.put("appName", InitDatas.APP_NAME);
                 JSONObject jsonObject = new JSONObject(params);
 
@@ -93,7 +95,7 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
                     break;
                 }
                 if (!MyTools.isMobileNO(sPhone)) {
-                    ToastUtils.showToast(mApp, "输入的手机格式不正确");
+                    ToastUtils.showToast(me, "输入的手机格式不正确");
                     break;
                 }
 
@@ -101,8 +103,8 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
                 params2.put("userName", sPhone);
                 params2.put("password", sCode);
                 params2.put("appName", InitDatas.APP_NAME);
+                params2.put("channelNo", InitDatas.CHANNEL_NO);
                 JSONObject loginJsonObject = new JSONObject(params2);
-
                 G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_LOGIN,this,loginJsonObject,LOGIN);
 
                 break;
@@ -123,7 +125,8 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
 
 
             case R.id.tv_agreement://注册协议跳转
-
+              //  Log.e("经纬度",InitDatas.sLocation.getLatitude() + "；" + InitDatas.sLocation.getLongitude());
+                ActivityUtil.goForward(me,RegistrationProActivity.class,null,false);
                 break;
         }
     }

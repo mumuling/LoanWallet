@@ -1,7 +1,7 @@
 package com.pingxun.daishangqianbao.utils;
 
 /**
- * Created by Administrator on 2017/8/6.
+ * Created by LH on 2017/8/6.
  */
 
 public class ArrayUtils {

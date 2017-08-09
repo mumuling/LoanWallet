@@ -14,7 +14,7 @@
         android:id="@+id/tv_title"
         style="@style/WrapWrap"
         android:layout_toRightOf="@+id/iv"
-        android:text="111111111111"
+
         android:textColor="@color/black"/>
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_marginTop="8dp"
         android:layout_toRightOf="@+id/iv"
         android:textSize="@dimen/sp_12"
-        android:text="2222222"/>
+        />
 
     <TextView
         android:id="@+id/tv_time_range"
@@ -33,7 +33,7 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/iv"
         android:textSize="@dimen/sp_12"
-        android:text="3333333"/>
+        />
 
     <TextView
         android:id="@+id/tv_interest_rate"
@@ -42,7 +42,7 @@
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@+id/iv"
         android:textSize="@dimen/sp_12"
-        android:text="4444444"/>
+       />
 
     <TextView
         android:id="@+id/tv_confirm"
@@ -63,6 +63,6 @@
         android:textSize="@dimen/sp_12"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/tv_time_range"
-        android:text="申请人数123人"/>
+        />
 
 </RelativeLayout>

@@ -1,126 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/MatchMatch.Vertical">
-
-    <include layout="@layout/topview" />
-
-    <include layout="@layout/line_vertical_1px_fragment4" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <RelativeLayout
-            android:id="@+id/rl_money"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_money"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="贷款金额" />
-
-            <ImageView
-                android:id="@+id/iv_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/tv_money"
-                android:src="@mipmap/icon_xiajiantou" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/rl_time"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="贷款期限" />
-
-            <ImageView
-                android:id="@+id/iv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@+id/tv_time"
-                android:src="@mipmap/icon_xiajiantou" />
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:id="@+id/rl_type"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <TextView
-                android:id="@+id/tv_type"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="贷款类型" />
-
-            <ImageView
-                android:layout_toRightOf="@+id/tv_type"
-                android:layout_centerVertical="true"
-                android:id="@+id/iv_type"
-                android:layout_marginLeft="5dp"
-                android:src="@mipmap/icon_xiajiantou"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </RelativeLayout>
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/view_line"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#e0e0e0">
-
-    </View>
-
-    <TextView
-        style="@style/MatchWrap"
-        android:background="@color/white"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-
-        android:text="温馨提示:同时申请多个贷款,可以有效提高放款成功率!"
-        android:textSize="12sp" />
-
-
-    <include layout="@layout/line_vertical_1px_fragment4" />
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             style="@style/MatchMatch.Vertical">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
         style="@style/MatchMatch">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv"
-            style="@style/MatchMatch" />
+        <LinearLayout
+            android:id="@+id/parent_view"
+            style="@style/MatchWrap.Vertical"
+            android:visibility="gone">
+
+            <include layout="@layout/topview"/>
+
+            <include layout="@layout/line_vertical_1px_fragment4"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:id="@+id/rl_money"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="贷款金额"/>
+
+                    <ImageView
+                        android:id="@+id/iv_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/tv_money"
+                        android:src="@mipmap/icon_xiajiantou"/>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/rl_time"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="贷款期限"/>
+
+                    <ImageView
+                        android:id="@+id/iv_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/tv_time"
+                        android:src="@mipmap/icon_xiajiantou"/>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:id="@+id/rl_type"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tv_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="贷款类型"/>
+
+                    <ImageView
+                        android:id="@+id/iv_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="5dp"
+                        android:layout_toRightOf="@+id/tv_type"
+                        android:src="@mipmap/icon_xiajiantou"/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view_line"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="#e0e0e0">
+
+            </View>
+
+            <TextView
+                style="@style/MatchWrap"
+                android:background="@color/white"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="10dp"
+                android:text="温馨提示:同时申请多个贷款,可以有效提高放款成功率!"
+                android:textSize="12sp"/>
+
+
+            <include layout="@layout/line_vertical_1px_fragment4"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv"
+                style="@style/MatchMatch"/>
+        </LinearLayout>
+
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <com.pingxun.daishangqianbao.ui.view.EmptyLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
-</LinearLayout>
+
+</FrameLayout>

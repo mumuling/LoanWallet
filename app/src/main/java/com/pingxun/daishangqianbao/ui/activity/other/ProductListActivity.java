@@ -10,12 +10,12 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.adapter.ProductListRecyclerViewAdapter;
 import com.pingxun.daishangqianbao.base.BaseActivity;
@@ -26,9 +26,11 @@ import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
 import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
+import com.pingxun.daishangqianbao.ui.view.EmptyLayout;
 import com.pingxun.daishangqianbao.ui.view.ListPopup;
 import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
+import com.pingxun.daishangqianbao.utils.NetUtil;
 import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 import com.pingxun.daishangqianbao.utils.VerticalItemDecoration;
@@ -86,6 +88,10 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     private RotateAnimation dismissArrowAnima;
 
     private String sTypeId="";
+    @BindView(R.id.parent_view)
+    LinearLayout mParentView;
+    @BindView(R.id.empty_layout)
+    EmptyLayout mEmptyLayout;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_product_list;
@@ -106,7 +112,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         initAdapter();
     }
 
-    @OnClick({R.id.rl_money, R.id.rl_time, R.id.rl_type})
+    @OnClick({R.id.rl_money, R.id.rl_time, R.id.rl_type,R.id.empty_layout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.rl_money://贷款金额
@@ -121,12 +127,17 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                 if (!mTypeListPopup.isShowing())startShowArrowAnima(mIvType);
                 mTypeListPopup.showPopupWindow(mViewLine);
                 break;
+            case R.id.empty_layout:
+                mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
+                onRefresh();
+                break;
         }
     }
 
 
-
-
+    /**
+     * 初始化adapter
+     */
     private void initAdapter() {
         notDataView = me.getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) mRv.getParent(), false);
         errorView = getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRv.getParent(), false);
@@ -146,10 +157,10 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+//                ToastUtils.showToast(me,String.valueOf(mListBean.get(position).getId()));
                 isLogin(String.valueOf(mListBean.get(position).getId()));
             }
         });
-
         errorView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,10 +193,11 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
      */
     @Override
     public void onResult(String jsonStr, int flag) {
+        mEmptyLayout.setErrorType(EmptyLayout.NO_ERROR);
+        mParentView.setVisibility(View.VISIBLE);
         switch (flag){
 
             case REFRESH://下拉刷新返回数据的回调
-                Logger.json(jsonStr);
                 mRv.setVisibility(View.VISIBLE);
                 mBean= Convert.fromJson(jsonStr,ProductListBean.class);
                 if (mBean==null||!mBean.isSuccess()){
@@ -196,19 +208,15 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                     mListBean=mBean.getData().getContent();
                     mAdapter.setNewData(mListBean);
                 }
-
                 break;
             case LOADMORE://上拉加载返回数据的回调
-
                 break;
             case AMOUNT://借款金额
                 initAmountListPopup(jsonStr);
                 break;
-
             case PERIOD://借款期限
                 initPeriodListPopup(jsonStr);
                 break;
-
             case TYPE://借款类型
                 initTypeListPopup(jsonStr);
                 break;
@@ -217,8 +225,12 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         }
 
     }
-
-
+    @Override
+    public void onError(int flag) {
+        if (NetUtil.getNetWorkState(me)==-1) {
+            mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
+        }
+    }
 
 
     /**
@@ -242,7 +254,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mAmountListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-                    ToastUtils.showToast(me,mList.get(what).getName());
+//                    ToastUtils.showToast(me,mList.get(what).getName());
                     mAmountListPopup.dismiss();
                 }
             });
@@ -281,7 +293,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mPeriodListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-                    ToastUtils.showToast(me,mList.get(what).getName());
+//                    ToastUtils.showToast(me,mList.get(what).getName());
                     mPeriodListPopup.dismiss();
                 }
             });
@@ -290,7 +302,6 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
                 public void onDismiss() {
 
                 }
-
                 @Override
                 public boolean onBeforeDismiss() {
                     startDismissArrowAnima(mIvTime);
@@ -324,7 +335,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mTypeListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-                    ToastUtils.showToast(me,mList.get(what).getName());
+//                    ToastUtils.showToast(me,mList.get(what).getName());
                     mTypeListPopup.dismiss();
                 }
             });
@@ -343,13 +354,10 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         }
     }
 
-    @Override
-    public void onError(int flag) {
 
-    }
 
     /**
-     * 刷新控件接口
+     * 下拉刷新回调
      */
     @Override
     public void onRefresh() {

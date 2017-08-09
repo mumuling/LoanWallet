@@ -1,7 +1,9 @@
 package com.pingxun.daishangqianbao.other;
 
 import android.graphics.Bitmap;
+import android.os.Environment;
 
+import com.amap.api.location.AMapLocation;
 import com.pingxun.daishangqianbao.data.F2JobDataBean;
 
 import java.math.BigDecimal;
@@ -12,8 +14,10 @@ import java.util.List;
  */
 
 public class InitDatas {
-
-
+    /**
+     * 定位类
+     */
+    public static AMapLocation sLocation;
 
     /**
      * 贷款最低金额
@@ -143,9 +147,14 @@ public class InitDatas {
 
     public static boolean isLogin=false;
 
+
+
+
     public static String APP_NAME="DSQB";
-    public static String CHANNEL_NO="android";//渠道类型：ios,android,wechat
+//    public static String CHANNEL_NO=ENUM_SOURCE_MARKET_CODE.BAIDU.value;//渠道类型：ios,android,wechat
+    public static String CHANNEL_NO="OFFICIAL_TEST";
     public static String ErrorMsg="获取信息失败!";
+    public static String NO_NETWORK_MSG="当前无网络，请检查您的网络";
     public static String SP_NAME=APP_NAME+"_UserInfo";//sp文件名
 
     //用于SP存储用户信息的Key
@@ -164,6 +173,11 @@ public class InitDatas {
     /**
      * 渠道编号
      */
-   // public static final String CURRENT_MARKET= ENUM_SOURCE_MARKET_CODE.SAMSUNG.value;
+    public static final String CURRENT_MARKET= ENUM_SOURCE_MARKET_CODE.SAMSUNG.value;
 
+    /**
+     * APP升级相关配置
+     */
+    public static String attachmentDownloadPath = Environment.getExternalStorageDirectory().toString() + "/LoanWallet";
+    public static boolean isHttpUpdate = false;  //是否是联网升级
 }

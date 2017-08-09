@@ -23,8 +23,6 @@ public class SPUtils {
 
     /**
      * 清空保存在默认SharePreference下的所有数据
-
-
      */
     public void clear() {
         editor.clear().commit();

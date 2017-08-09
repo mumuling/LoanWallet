@@ -18,7 +18,8 @@ import java.io.Reader;
 import java.io.Writer;
 
 /**
- * Created by Administrator on 2017-04-28.
+ * Created by LH on 2017-04-28.
+ *
  */
 
 public class Base64Util {

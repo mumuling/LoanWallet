@@ -3,7 +3,7 @@ package com.pingxun.daishangqianbao.utils;
 import android.content.Context;
 
 /**
- * Created by 大灯泡 on 2016/1/16.
+ * Created by LH on 2016/1/16.
  */
 public class DimensUtils {
     /**

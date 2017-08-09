@@ -165,6 +165,12 @@ public class SharedPrefsUtil {
         return value;
     }
 
+    //清除sp下所有键值对
+    public static void clear(Context context,String name){
+        SharedPreferences.Editor sp = getEditor(context, name);
+        sp.clear().commit();
+    }
+
     //获取Editor实例
     private static SharedPreferences.Editor getEditor(Context context, String name) {
         return getSharedPreferences(context, name).edit();
@@ -174,4 +180,6 @@ public class SharedPrefsUtil {
     private static SharedPreferences getSharedPreferences(Context context, String name) {
         return context.getSharedPreferences(name, Context.MODE_PRIVATE);
     }
+
+
 }

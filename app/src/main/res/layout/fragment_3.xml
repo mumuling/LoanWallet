@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              style="@style/MatchMatch.Vertical">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             style="@style/MatchMatch.Vertical">
 
-    <include layout="@layout/topview_no_back"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
         style="@style/MatchWrap">
 
         <com.pingxun.daishangqianbao.ui.view.MyNestedScrollView
-            style="@style/MatchMatch">
+            style="@style/MatchWrap">
 
             <LinearLayout
+                android:id="@+id/parent_view"
+                android:visibility="gone"
                 style="@style/MatchWrap.Vertical">
+
+                <include layout="@layout/topview_no_back"/>
+
+                <include layout="@layout/line_vertical_1px_fragment4"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv1"
@@ -25,10 +30,10 @@
                     android:background="@color/f1_type_bg"/>
 
                 <TextView
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     style="@style/WrapWrap"
+                    android:layout_marginBottom="10dp"
                     android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
                     android:drawableLeft="@mipmap/icon_biaoqian"
                     android:drawablePadding="10dp"
                     android:text="推荐信用卡"
@@ -49,5 +54,9 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-</LinearLayout>
+    <com.pingxun.daishangqianbao.ui.view.EmptyLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</FrameLayout>

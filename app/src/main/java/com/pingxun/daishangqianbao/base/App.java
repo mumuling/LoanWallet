@@ -2,12 +2,11 @@ package com.pingxun.daishangqianbao.base;
 
 import android.app.Application;
 
-
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.cache.CacheEntity;
 import com.lzy.okgo.cache.CacheMode;
 import com.lzy.okgo.cookie.CookieJarImpl;
-import com.lzy.okgo.cookie.store.DBCookieStore;
+import com.lzy.okgo.cookie.store.SPCookieStore;
 import com.lzy.okgo.https.HttpsUtils;
 import com.lzy.okgo.interceptor.HttpLoggingInterceptor;
 
@@ -28,23 +27,20 @@ public class App extends Application {
     public static double longitude; //经度
     public static double latitude; //纬度
     public static double speed;   //速度
-    public static  double Angle;
+    public static double Angle;
     public static double TowPointlong; //与上一经伟度点间的里程，单位：米
     public static int GpsAccuracyStatus;//GPS信号强度
     public static double runlong; //行驶里程，单位：米
     public static long lastTime;   //最后定位时间
-    public static int CONNECTION_TIMED_OUT=10000;//设置连接超时时间
-
-    private static App sInstance;
-
+    public static int CONNECTION_TIMED_OUT = 10000;//设置连接超时时间
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sInstance = this;
         //必须调用初始化
         initOkGo();
     }
+
     private void initOkGo() {
         //---------这里给出的是示例代码,告诉你可以这么传,实际使用的时候,根据需要传,不需要就不传-------------//
 //        HttpHeaders headers = new HttpHeaders();
@@ -70,15 +66,15 @@ public class App extends Application {
         builder.connectTimeout(CONNECTION_TIMED_OUT, TimeUnit.MILLISECONDS);   //全局的连接超时时间
 
         //自动管理cookie（或者叫session的保持），以下几种任选其一就行
-      //  builder.cookieJar(new CookieJarImpl(new SPCookieStore(this)));            //使用sp保持cookie，如果cookie不过期，则一直有效
-        builder.cookieJar(new CookieJarImpl(new DBCookieStore(this)));              //使用数据库保持cookie，如果cookie不过期，则一直有效
+        builder.cookieJar(new CookieJarImpl(new SPCookieStore(this)));            //使用sp保持cookie，如果cookie不过期，则一直有效
+        // builder.cookieJar(new CookieJarImpl(new DBCookieStore(this)));              //使用数据库保持cookie，如果cookie不过期，则一直有效
         //builder.cookieJar(new CookieJarImpl(new MemoryCookieStore()));            //使用内存保持cookie，app退出后，cookie消失
 
         //https相关设置，以下几种方案根据需要自己设置
         //方法一：信任所有证书,不安全有风险
-         HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
+        HttpsUtils.SSLParams sslParams1 = HttpsUtils.getSslSocketFactory();
         //方法二：自定义信任规则，校验服务端证书
-      //  HttpsUtils.SSLParams sslParams2 = HttpsUtils.getSslSocketFactory(new SafeTrustManager());
+        //  HttpsUtils.SSLParams sslParams2 = HttpsUtils.getSslSocketFactory(new SafeTrustManager());
         //方法三：使用预埋证书，校验服务端证书（自签名证书）
         //HttpsUtils.SSLParams sslParams3 = HttpsUtils.getSslSocketFactory(getAssets().open("srca.cer"));
         //方法四：使用bks证书和密码管理客户端证书（双向认证），使用预埋证书，校验服务端证书（自签名证书）
@@ -98,14 +94,6 @@ public class App extends Application {
                 .setRetryCount(3);                               //全局统一超时重连次数，默认为三次，那么最差的情况会请求4次(一次原始请求，三次重连请求)，不需要可以设置为0
 //                .addCommonHeaders(headers)                      //全局公共头
 //                .addCommonParams(params);                       //全局公共参数
-    }
-
-
-    public static App getInstance() {
-        if (sInstance==null){
-            sInstance=new App();
-        }
-        return sInstance;
     }
 
 

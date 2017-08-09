@@ -2,6 +2,7 @@ package com.pingxun.daishangqianbao.utils;
 
 /**
  * 防止按钮短时间内被多次点击的工具类
+ *
  */
 
 public class ClickSleep {

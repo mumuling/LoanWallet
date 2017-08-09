@@ -1,222 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/MatchMatch.Vertical"
-    android:background="#08000000">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             style="@style/MatchMatch.Vertical">
 
-    <LinearLayout
-        style="@style/MatchWrap.Vertical"
-        android:background="@color/white"
-        android:gravity="center_horizontal">
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayout"
+        style="@style/MatchWrap">
 
-        <TextView
-            style="@style/WrapWrap"
-            android:layout_marginTop="20dp"
-            android:text="精准"
-            android:textColor="@color/black"
-            android:textSize="20sp" />
-
-        <TextView
-            style="@style/WrapWrap"
-            android:layout_marginTop="35dp"
-            android:text="借款金额" />
-
-        <TextView
-            android:id="@+id/tv_total_money"
-            style="@style/WrapWrap"
-            android:layout_marginTop="12dp"
-
-            android:textColor="@color/tab_font_bright"
-            android:textSize="24sp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="100dp">
-
-            <com.pingxun.daishangqianbao.ui.view.RulerView
-                android:id="@+id/rulerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                app:alphaEnable="true"
-                app:lineColor="@color/tab_font_bright"
-                app:lineMaxHeight="35dp"
-                app:lineMidHeight="30dp"
-                app:lineMinHeight="25dp"
-                app:lineSpaceWidth="5dp"
-                app:lineWidth="1dp"
-                app:textColor="@color/tab_font_bright"
-                app:textMarginTop="16dp"
-                app:textSize2="10sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:background="@mipmap/icon_ruler" />
-        </RelativeLayout>
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/homePageContentScroll"
-        style="@style/MatchMatch"
-        android:scrollbars="none">
-
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/homePageContentScroll"
             style="@style/MatchWrap"
-            android:divider="@drawable/borders"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:showDividers="middle">
+            android:scrollbars="none">
 
-
-            <!--日 月-->
             <LinearLayout
-                style="@style/MatchWrap"
-                android:background="@drawable/borders"
-                android:gravity="center"
-                android:paddingBottom="10dp"
-                android:paddingTop="20dp">
-
-                <ImageButton
-                    android:id="@+id/btn_day_or_month"
-                    style="@style/WrapWrap"
-                    android:background="@mipmap/icon_date_day" />
-            </LinearLayout>
-
-
-            <!--进度条-->
-            <RelativeLayout
-                style="@style/MatchWrap"
-                android:background="@color/white">
-
-                <TextView
-                    android:id="@+id/tv_start_time"
-                    style="@style/WrapWrap"
-                    android:layout_centerVertical="true"
-                    android:layout_toLeftOf="@+id/seekBar"
-                    android:text="1天"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:typeface="serif" />
-
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    android:layout_width="240dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:maxHeight="10dp"
-                    android:minHeight="10dp"
-                    android:progressDrawable="@drawable/po_seekbar"
-                    android:thumb="@drawable/seekbar_thumb"
-                    android:thumbOffset="0dp" />
-
-                <TextView
-                    android:id="@+id/tv_end_time"
-                    style="@style/WrapWrap"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/seekBar"
-                    android:text="360天"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    android:typeface="serif" />
-
-            </RelativeLayout>
-
-            <!--还款信息-->
-            <LinearLayout
-                style="@style/MatchWrap.Horizontal"
+                android:id="@+id/parent_view"
+                style="@style/MatchWrap.Vertical"
                 android:background="@color/white"
-                android:paddingTop="20dp">
+                android:gravity="center_horizontal"
+                android:visibility="gone">
 
                 <TextView
-                    style="@style/MatchWrap"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:text="还款期限"
-                    android:textAlignment="center"
-                    android:textSize="14dp"
-                    android:typeface="serif" />
-
-                <TextView
-                    style="@style/MatchWrap"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:text="每期应还"
-                    android:textAlignment="center"
-                    android:textSize="14dp"
-                    android:typeface="serif" />
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/MatchWrap.Horizontal"
-                android:background="@color/white">
-
-                <TextView
-                    android:id="@+id/tv_hkqx"
-                    style="@style/MatchWrap"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:text="0天"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:typeface="serif" />
-
-                <TextView
-                    android:id="@+id/tv_mqyh"
-                    style="@style/MatchWrap"
-                    android:layout_weight="1"
-                    android:gravity="center_horizontal"
-                    android:text="￥0"
-                    android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textSize="16dp"
-                    android:typeface="serif" />
-            </LinearLayout>
-
-
-            <!--选择职业-->
-            <LinearLayout
-                android:id="@+id/lin_job_choose"
-                style="@style/MatchWrap"
-                android:layout_marginTop="10dp"
-                android:background="@color/white"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/tv_job"
                     style="@style/WrapWrap"
-                    android:layout_marginLeft="30dp"
-                    android:layout_weight="3"
-                    android:text="选择职业"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="20dp"
+                    android:text="精准"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"/>
 
-                <ImageView
-                    android:layout_width="10dp"
-                    android:layout_height="20dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_weight="0.2"
-                    android:background="@mipmap/next_btn" />
+                <TextView
+                    style="@style/WrapWrap"
+                    android:layout_marginTop="35dp"
+                    android:text="借款金额"/>
 
+                <TextView
+                    android:id="@+id/tv_total_money"
+                    style="@style/WrapWrap"
+                    android:layout_marginTop="12dp"
+
+                    android:textColor="@color/tab_font_bright"
+                    android:textSize="24sp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                    <com.pingxun.daishangqianbao.ui.view.RulerView
+                        android:id="@+id/rulerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white"
+                        app:alphaEnable="false"
+                        app:lineColor="@color/tab_font_bright"
+                        app:lineMaxHeight="35dp"
+                        app:lineMidHeight="30dp"
+                        app:lineMinHeight="25dp"
+                        app:lineSpaceWidth="5dp"
+                        app:lineWidth="1dp"
+                        app:textColor="@color/tab_font_bright"
+                        app:textMarginTop="16dp"
+                        app:textSize2="10sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:background="@mipmap/icon_ruler"/>
+                </RelativeLayout>
+
+                <LinearLayout
+                    style="@style/MatchWrap"
+                    android:divider="@drawable/borders"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:showDividers="middle">
+
+
+                    <!--日 月-->
+                    <LinearLayout
+                        style="@style/MatchWrap"
+                        android:background="@drawable/borders"
+                        android:gravity="center"
+                        android:paddingBottom="10dp"
+                        android:paddingTop="20dp">
+
+                        <ImageButton
+                            android:id="@+id/btn_day_or_month"
+                            style="@style/WrapWrap"
+                            android:background="@mipmap/icon_date_day"/>
+                    </LinearLayout>
+
+
+                    <!--进度条-->
+                    <RelativeLayout
+                        style="@style/MatchWrap"
+                        android:background="@color/white">
+
+                        <TextView
+                            android:id="@+id/tv_start_time"
+                            style="@style/WrapWrap"
+                            android:layout_centerVertical="true"
+                            android:layout_toLeftOf="@+id/seekBar"
+                            android:text="1天"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:typeface="serif"/>
+
+                        <SeekBar
+                            android:id="@+id/seekBar"
+                            android:layout_width="240dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:maxHeight="10dp"
+                            android:minHeight="10dp"
+                            android:progressDrawable="@drawable/po_seekbar"
+                            android:thumb="@drawable/seekbar_thumb"
+                            android:thumbOffset="0dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_end_time"
+                            style="@style/WrapWrap"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/seekBar"
+                            android:text="360天"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:typeface="serif"/>
+
+                    </RelativeLayout>
+
+                    <!--还款信息-->
+                    <LinearLayout
+                        style="@style/MatchWrap.Horizontal"
+                        android:background="@color/white"
+                        android:paddingTop="20dp">
+
+                        <TextView
+                            style="@style/MatchWrap"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:text="还款期限"
+                            android:textAlignment="center"
+                            android:textSize="14dp"
+                            android:typeface="serif"/>
+
+                        <TextView
+                            style="@style/MatchWrap"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:text="每期应还"
+                            android:textAlignment="center"
+                            android:textSize="14dp"
+                            android:typeface="serif"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        style="@style/MatchWrap.Horizontal"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/white">
+
+                        <TextView
+                            android:id="@+id/tv_hkqx"
+                            style="@style/MatchWrap"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:text="0天"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            android:textSize="16dp"
+                            android:typeface="serif"/>
+
+                        <TextView
+                            android:id="@+id/tv_mqyh"
+                            style="@style/MatchWrap"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:text="￥0"
+                            android:textAlignment="center"
+                            android:textColor="@color/black"
+                            android:textSize="16dp"
+                            android:typeface="serif"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:background="@color/f1_type_bg"/>
+                    <!--选择职业-->
+                    <LinearLayout
+                        android:id="@+id/lin_job_choose"
+                        style="@style/MatchWrap"
+                        android:background="@color/white"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:id="@+id/tv_job"
+                            style="@style/WrapWrap"
+                            android:layout_marginLeft="30dp"
+                            android:layout_weight="3"
+                            android:text="选择职业"
+                            android:textSize="18sp"/>
+
+                        <ImageView
+                            android:layout_width="10dp"
+                            android:layout_height="20dp"
+                            android:layout_marginRight="30dp"
+                            android:layout_weight="0.2"
+                            android:background="@mipmap/next_btn"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:background="@color/f1_type_bg"/>
+
+                    <!--搜索按钮-->
+                    <Button
+                        android:id="@+id/btn_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_margin="30dp"
+                        android:background="@drawable/cornerbottom"
+                        android:text="搜 索"
+                        android:textAlignment="center"
+                        android:textColor="#FFFEFF"
+                        android:textSize="20sp"
+                        android:typeface="serif"/>
+                </LinearLayout>
             </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-            <!--搜索按钮-->
-            <Button
-                android:id="@+id/btn_search"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_margin="30dp"
-                android:background="@drawable/cornerbottom"
-                android:text="搜 索"
-                android:textAlignment="center"
-                android:textColor="#FFFEFF"
-                android:textSize="20sp"
-                android:typeface="serif" />
-
-        </LinearLayout>
-
-    </ScrollView>
-
-</LinearLayout>
+    <com.pingxun.daishangqianbao.ui.view.EmptyLayout
+        android:id="@+id/empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+</FrameLayout>

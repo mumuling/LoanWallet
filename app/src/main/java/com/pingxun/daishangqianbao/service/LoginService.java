@@ -59,6 +59,7 @@ public class LoginService extends Service implements G_api.OnResultHandler{
     public void onResult(String jsonStr, int flag) {
         switch (flag){
             case LOGIN:
+
                 LoginBean mLoginBean= Convert.fromJson(jsonStr,LoginBean.class);
                 if (mLoginBean==null||!mLoginBean.isSuccess()){
                     SharedPrefsUtil.putValue(this,InitDatas.SP_NAME,InitDatas.UserIsLogin,false);
@@ -73,10 +74,6 @@ public class LoginService extends Service implements G_api.OnResultHandler{
 
     @Override
     public void onError(int flag) {
-          switch (flag){
-              case LOGIN:
-                  SharedPrefsUtil.putValue(this,InitDatas.SP_NAME,InitDatas.UserIsLogin,false);
-                  break;
-          }
+
     }
 }

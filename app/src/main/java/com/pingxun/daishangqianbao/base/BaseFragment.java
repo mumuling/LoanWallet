@@ -1,7 +1,6 @@
 package com.pingxun.daishangqianbao.base;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
@@ -25,7 +24,6 @@ public abstract class BaseFragment extends Fragment {
 
     protected ViewGroup mContentView;
     protected String TAG;
-    protected App mApp;
     protected BaseActivity mActivity;
     protected boolean mIsLoadedData = false;
     Unbinder unbinder;
@@ -36,7 +34,7 @@ public abstract class BaseFragment extends Fragment {
         TAG = this.getClass().getSimpleName();
         mActivity = (BaseActivity) getActivity();
 
-        mApp = App.getInstance();
+
     }
 
 
@@ -138,6 +136,7 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroy();
         unbinder.unbind();
         OkGo.getInstance().cancelTag(this);
-
     }
+
+
 }

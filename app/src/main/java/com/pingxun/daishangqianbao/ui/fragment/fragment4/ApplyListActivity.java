@@ -1,5 +1,6 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment4;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +17,11 @@ import com.pingxun.daishangqianbao.data.ApplyListBean;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
+import com.pingxun.daishangqianbao.ui.activity.common.LoginActivity;
+import com.pingxun.daishangqianbao.ui.activity.other.ProductInfoActivity;
+import com.pingxun.daishangqianbao.utils.ActivityUtil;
 import com.pingxun.daishangqianbao.utils.Convert;
+import com.pingxun.daishangqianbao.utils.SharedPrefsUtil;
 import com.pingxun.daishangqianbao.utils.ToastUtils;
 import com.pingxun.daishangqianbao.utils.VerticalItemDecoration;
 
@@ -86,9 +91,8 @@ public class ApplyListActivity extends BaseActivity implements SwipeRefreshLayou
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                Bundle bundle=new Bundle();
-//                bundle.putString(InitDatas.PROUDUCT_ID,String.valueOf(mListBean.get(position).getId()));
-//                ActivityUtil.goForward(me,ProductInfoActivity.class,bundle,false);
+//                ToastUtils.showToast(me,String.valueOf(mApplyList.get(position).getProductId()));
+                isLogin(String.valueOf(mApplyList.get(position).getProductId()));
             }
         });
 
@@ -125,7 +129,6 @@ public class ApplyListActivity extends BaseActivity implements SwipeRefreshLayou
         HashMap<String, String> params = new HashMap<>();
         params.put("pageNo", "1");
         params.put("appName", InitDatas.APP_NAME);
-
         G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_POST_FIND_APPLY_LIST,params,REFRESH);
     }
 
@@ -151,5 +154,20 @@ public class ApplyListActivity extends BaseActivity implements SwipeRefreshLayou
     @Override
     public void onError(int flag) {
 
+    }
+
+    /**
+     * 判断是否登录，登录了才能跳转到产品详情界面
+     *
+     * @param sId
+     */
+    private void isLogin(String sId) {
+        if (!SharedPrefsUtil.getValue(me, InitDatas.SP_NAME, InitDatas.UserIsLogin, false)) {
+            ActivityUtil.goForward(me, LoginActivity.class, null, false);
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putString(InitDatas.PROUDUCT_ID, sId);
+            ActivityUtil.goForward(me, ProductInfoActivity.class, bundle, false);
+        }
     }
 }

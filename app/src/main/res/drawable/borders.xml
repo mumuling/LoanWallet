@@ -11,11 +11,11 @@
         android:color="#F3F3F3" /><!-- 定义描边的宽度和描边的颜色值 -->
 
     <!-- 圆角 -->
-    <!--<corners
+    <corners
         android:bottomLeftRadius="5dp"
         android:bottomRightRadius="5dp"
         android:topLeftRadius="5dp"
-        android:topRightRadius="5dp" />--> <!-- 设置四个角的半径 -->
+        android:topRightRadius="5dp" /><!-- 设置四个角的半径 -->
 
     <!-- 间隔 -->
     <!--<padding

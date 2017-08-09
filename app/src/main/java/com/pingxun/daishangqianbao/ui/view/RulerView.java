@@ -16,7 +16,6 @@ import com.pingxun.daishangqianbao.R;
 /**
  * 自定义刻度尺View
  */
-
 public class RulerView extends View {
     private int mMinVelocity;
     private Scroller mScroller;

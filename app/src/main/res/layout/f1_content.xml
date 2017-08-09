@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              style="@style/MatchMatch.Vertical"
+              android:background="@color/f1_type_bg">
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayout"
+        style="@style/MatchMatch">
+
+        <com.pingxun.daishangqianbao.ui.view.MyNestedScrollView
+            style="@style/MatchMatch">
+
+
+            <LinearLayout
+                style="@style/MatchWrap.Vertical">
+
+                <include layout="@layout/fragment_1_head_view"/>
+                <!--产品分类-->
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv1"
+                    style="@style/MatchWrap"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@color/f1_type_bg">
+
+                </android.support.v7.widget.RecyclerView>
+
+
+                <!-- 产品推荐 -->
+                <LinearLayout
+                    style="@style/MatchWrap.Vertical"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/shap_white">
+
+                    <RelativeLayout
+                        style="@style/MatchWrap"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_fragment1"
+                        android:padding="4dp"
+                        >
+
+                        <TextView
+                            style="@style/WrapWrap"
+                            android:layout_centerInParent="true"
+                            android:text="产品推荐"
+                            android:textColor="@color/tab_font_bright"/>
+
+                        <TextView
+                            style="@style/WrapWrap"
+                            android:layout_alignParentRight="true"
+                            android:text="..."
+                            android:textColor="@color/tab_font_bright"/>
+
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv2"
+                        style="@style/MatchWrap"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp">
+
+                    </android.support.v7.widget.RecyclerView>
+                </LinearLayout>
+
+                <!--办卡专区-->
+                <LinearLayout
+                    style="@style/MatchWrap.Vertical"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/shap_white">
+
+                    <RelativeLayout
+                        style="@style/MatchWrap"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/shape_fragment1_2"
+                        android:padding="4dp">
+
+                        <TextView
+                            style="@style/WrapWrap"
+                            android:layout_centerInParent="true"
+                            android:text="办卡专区"
+                            android:textColor="@color/blue"/>
+
+                        <TextView
+                            style="@style/WrapWrap"
+                            android:layout_alignParentRight="true"
+                            android:text="..."
+                            android:textColor="@color/blue"/>
+
+                    </RelativeLayout>
+
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv3"
+                        style="@style/MatchWrap"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp">
+                    </android.support.v7.widget.RecyclerView>
+
+                </LinearLayout>
+            </LinearLayout>
+
+        </com.pingxun.daishangqianbao.ui.view.MyNestedScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</LinearLayout>
