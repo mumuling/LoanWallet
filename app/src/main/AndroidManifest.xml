@@ -98,10 +98,9 @@
 
         </activity>
         <activity android:name=".ui.activity.common.GuidActivity"/>
-        <activity android:name=".ui.activity.common.AboutUsActivity">
-        </activity>
-        <activity android:name=".ui.activity.common.RegistrationProActivity">
-        </activity>
+        <activity android:name=".ui.activity.common.AboutUsActivity"/>
+        <activity android:name=".ui.activity.common.RegistrationProActivity"/>
+        <activity android:name=".meijie.DemoActivity"/>
     </application>
 
 </manifest>

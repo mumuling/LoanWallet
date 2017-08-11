@@ -67,13 +67,19 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     @BindView(R.id.iv_money) ImageView mIvMoney;//贷款金额下箭头
     @BindView(R.id.iv_time) ImageView mIvTime;//贷款期限下箭头
     @BindView(R.id.iv_type) ImageView mIvType;//贷款类型下箭头
+    @BindView(R.id.parent_view) LinearLayout mParentView;//父布局
+    @BindView(R.id.empty_layout) EmptyLayout mEmptyLayout;//空布局
 
     private ProductListRecyclerViewAdapter mAdapter;
     private ProductListBean mBean;
-    private List<ProductListBean.DataBean.ContentBean> mListBean;//产品集合
+    private List<ProductListBean.DataBean.ContentBean> mList;//产品集合
     private List<ProductListBean.DataBean.SortBean> mSortListBean;//以后会用到
     private View notDataView;//无数据View
     private View errorView;//网络异常View
+    private int page_size = 10;//每一次请求加载的条数
+    private int mCurrentCounter = 0;//上一次加载的个数
+    private int TOTAL_COUNTER;//总数
+    private int page=1;
 
     private static final int REFRESH = 1;//下拉刷新标识
     private static final int LOADMORE = 2;//上拉加载标识
@@ -88,10 +94,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
     private RotateAnimation dismissArrowAnima;
 
     private String sTypeId="";
-    @BindView(R.id.parent_view)
-    LinearLayout mParentView;
-    @BindView(R.id.empty_layout)
-    EmptyLayout mEmptyLayout;
+
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_product_list;
@@ -108,8 +113,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         buildDismissArrowAnima();
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
-        onRefresh();
         initAdapter();
+        onRefresh();
+
     }
 
     @OnClick({R.id.rl_money, R.id.rl_time, R.id.rl_type,R.id.empty_layout})
@@ -144,12 +150,12 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
         mRv.setLayoutManager(new LinearLayoutManager(me));
         mRv.addItemDecoration(new VerticalItemDecoration(me, 1));
-        mAdapter = new ProductListRecyclerViewAdapter(R.layout.rv_item_product_list,mListBean);
-//      mAdapter.setOnLoadMoreListener(this, mRv);
+        mAdapter = new ProductListRecyclerViewAdapter(R.layout.rv_item_product_list,mList);
+        mAdapter.setOnLoadMoreListener(this, mRv);
         mAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+
         mRv.setAdapter(mAdapter);
         mRv.setHasFixedSize(true);
-
         mRv.addOnItemTouchListener(new OnItemChildClickListener() {
             @Override
             public void onSimpleItemChildClick(BaseQuickAdapter adapter, View view, int position) {
@@ -157,10 +163,12 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-//                ToastUtils.showToast(me,String.valueOf(mListBean.get(position).getId()));
-                isLogin(String.valueOf(mListBean.get(position).getId()));
+//                ToastUtils.showToast(me,String.valueOf(mList.get(position).getId()));
+                isLogin(String.valueOf(mList.get(position).getId()));
             }
         });
+
+
         errorView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,6 +176,187 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             }
         });
 
+        notDataView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+            }
+        });
+
+    }
+
+
+    /**
+     * 网络请求回调
+     * @param jsonStr jsonString
+     * @param flag 标识
+     */
+    @Override
+    public void onResult(String jsonStr, int flag) {
+        mEmptyLayout.setErrorType(EmptyLayout.NO_ERROR);
+        mParentView.setVisibility(View.VISIBLE);
+        switch (flag){
+
+            case REFRESH://下拉刷新返回数据的回调
+
+                mRv.setVisibility(View.VISIBLE);
+                mBean= Convert.fromJson(jsonStr,ProductListBean.class);
+                if (!mBean.isSuccess()){
+                    mAdapter.setNewData(null);
+                    mAdapter.setEmptyView(errorView);
+                    return;
+                }
+                if (mBean.isSuccess()){
+                    TOTAL_COUNTER=mBean.getData().getTotalElements();
+                    mList=mBean.getData().getContent();
+                    if (mList.size()==0){
+                        mAdapter.setNewData(null);
+                        mAdapter.setEmptyView(notDataView);
+                    }else {
+                        mAdapter.setNewData(mList);
+                        mAdapter.disableLoadMoreIfNotFullPage();
+                        mCurrentCounter=mAdapter.getData().size();
+                    }
+                }
+
+                break;
+            case LOADMORE://上拉加载返回数据的回调
+
+                mAdapter.loadMoreComplete();
+                mBean = Convert.fromJson(jsonStr, ProductListBean.class);
+                if (!mBean.isSuccess()){
+                    mAdapter.setNewData(null);
+                    mAdapter.setEmptyView(errorView);
+                }
+                if (mBean.isSuccess()){
+                    List<ProductListBean.DataBean.ContentBean> mListMore;
+                    mListMore = mBean.getData().getContent();
+                    mAdapter.addData(mListMore);
+                    mCurrentCounter = mAdapter.getData().size();
+                }
+
+                break;
+
+            case AMOUNT://借款金额
+                initAmountListPopup(jsonStr);
+                break;
+            case PERIOD://借款期限
+                initPeriodListPopup(jsonStr);
+                break;
+            case TYPE://借款类型
+                initTypeListPopup(jsonStr);
+                break;
+        }
+
+    }
+    @Override
+    public void onError(int flag) {
+        if (NetUtil.getNetWorkState(me)==-1) {
+            mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
+        }
+    }
+
+    /**
+     * 下拉刷新回调
+     */
+    @Override
+    public void onRefresh() {
+
+        mSwipeLayout.setRefreshing(true);
+        mAdapter.setEnableLoadMore(true);
+        mRv.setVisibility(View.GONE);
+
+        Observable.timer(1, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        page=1;
+                        postProductSearch(sTypeId,page,REFRESH);
+                        getAmount();
+                        getPeriod();
+                        getType();
+                        mSwipeLayout.setRefreshing(false);
+                    }
+                });
+    }
+
+    /**
+     * 上拉加载接口
+     */
+    @Override
+    public void onLoadMoreRequested() {
+        if (mCurrentCounter < page_size) {
+            mAdapter.loadMoreEnd(true);
+        } else {
+            if (mCurrentCounter>=TOTAL_COUNTER){
+                mAdapter.loadMoreEnd(false);
+            }else {
+                if (NetUtil.getNetWorkState(me)!=-1){
+                    Observable.timer(1, TimeUnit.SECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<Long>() {
+                                @Override
+                                public void call(Long aLong) {
+                                    page++;
+                                    postProductSearch(sTypeId,page,LOADMORE);
+                                }
+                            });
+
+                }else {
+                    ToastUtils.showToast(me,"网络连接异常!");
+                    mAdapter.loadMoreFail();
+                }
+            }
+        }
+    }
+
+
+
+    /**
+     * 产品搜索
+     * @param sTypeId 类型ID
+     * @param page 请求的页码
+     * @param state 下拉或者上拉
+     */
+    private void postProductSearch(String sTypeId,int page,int state) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("period", "");//期限
+        params.put("dateCycle", "");//期限周期
+        params.put("amount", "");//借款金额
+        params.put("loanType",sTypeId);
+        params.put("channelNo", InitDatas.CHANNEL_NO);//渠道类型：ios,android,wechat
+        params.put("appName", InitDatas.APP_NAME);
+        params.put("pageNo",page+"");
+        JSONObject jsonObject = new JSONObject(params);
+        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION,jsonObject, state);
+    }
+
+    /**
+     * 获取贷款类型
+     */
+    private void getType() {
+        Map<String, String> map = new HashMap<>();
+        map.put("type", "loanType ");
+        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, TYPE);
+    }
+
+    /**
+     * 获取贷款金额
+     */
+    private void getAmount() {
+        Map<String, String> map = new HashMap<>();
+        map.put("type", "loanAmount");
+        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, AMOUNT);
+    }
+
+    /**
+     * 获取贷款期限
+     */
+    private void getPeriod() {
+        Map<String, String> map = new HashMap<>();
+        map.put("type", "loanPeriod");
+        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, PERIOD);
     }
 
 
@@ -186,51 +375,6 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         }
     }
 
-    /**
-     * 网络请求回调
-     * @param jsonStr jsonString
-     * @param flag 标识
-     */
-    @Override
-    public void onResult(String jsonStr, int flag) {
-        mEmptyLayout.setErrorType(EmptyLayout.NO_ERROR);
-        mParentView.setVisibility(View.VISIBLE);
-        switch (flag){
-
-            case REFRESH://下拉刷新返回数据的回调
-                mRv.setVisibility(View.VISIBLE);
-                mBean= Convert.fromJson(jsonStr,ProductListBean.class);
-                if (mBean==null||!mBean.isSuccess()){
-                    mAdapter.setNewData(null);
-                    mAdapter.setEmptyView(errorView);
-                }
-                if (mBean.isSuccess()){
-                    mListBean=mBean.getData().getContent();
-                    mAdapter.setNewData(mListBean);
-                }
-                break;
-            case LOADMORE://上拉加载返回数据的回调
-                break;
-            case AMOUNT://借款金额
-                initAmountListPopup(jsonStr);
-                break;
-            case PERIOD://借款期限
-                initPeriodListPopup(jsonStr);
-                break;
-            case TYPE://借款类型
-                initTypeListPopup(jsonStr);
-                break;
-
-
-        }
-
-    }
-    @Override
-    public void onError(int flag) {
-        if (NetUtil.getNetWorkState(me)==-1) {
-            mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
-        }
-    }
 
 
     /**
@@ -238,7 +382,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
      * @param jsonStr
      */
     private void initAmountListPopup(String jsonStr) {
-         F2JobDataBean mAmountBean = Convert.fromJson(jsonStr, F2JobDataBean.class);
+        F2JobDataBean mAmountBean = Convert.fromJson(jsonStr, F2JobDataBean.class);
         if (mAmountBean == null || !mAmountBean.isSuccess()) {
             ToastUtils.showToast(me, "获取贷款金额失败!");
             mRlMoney.setEnabled(false);
@@ -254,8 +398,8 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mAmountListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-//                    ToastUtils.showToast(me,mList.get(what).getName());
                     mAmountListPopup.dismiss();
+                    onRefresh();
                 }
             });
             mAmountListPopup.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
@@ -277,7 +421,7 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
      * @param jsonStr
      */
     private void initPeriodListPopup(String jsonStr) {
-         F2JobDataBean mPeriodBean = Convert.fromJson(jsonStr, F2JobDataBean.class);
+        F2JobDataBean mPeriodBean = Convert.fromJson(jsonStr, F2JobDataBean.class);
         if (mPeriodBean == null || !mPeriodBean.isSuccess()) {
             ToastUtils.showToast(me, "获取贷款期限集合失败!");
             mRlTime.setEnabled(false);
@@ -293,8 +437,9 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mPeriodListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-//                    ToastUtils.showToast(me,mList.get(what).getName());
+
                     mPeriodListPopup.dismiss();
+                    onRefresh();
                 }
             });
             mPeriodListPopup.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
@@ -335,8 +480,8 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
             mTypeListPopup.setOnListPopupItemClickListener(new ListPopup.OnListPopupItemClickListener() {
                 @Override
                 public void onItemClick(int what) {
-//                    ToastUtils.showToast(me,mList.get(what).getName());
                     mTypeListPopup.dismiss();
+                    onRefresh();
                 }
             });
             mTypeListPopup.setOnDismissListener(new BasePopupWindow.OnDismissListener() {
@@ -356,79 +501,22 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
 
 
 
-    /**
-     * 下拉刷新回调
-     */
-    @Override
-    public void onRefresh() {
-        mSwipeLayout.setRefreshing(true);
-        mRv.setVisibility(View.GONE);
-
-        Observable.timer(1, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        postProductSearch(sTypeId);
-                        getAmount();
-                        getPeriod();
-                        getType();
-                        mSwipeLayout.setRefreshing(false);
-                    }
-                });
-    }
-
-    /**
-     * 上拉加载接口
-     */
-    @Override
-    public void onLoadMoreRequested() {
-
-    }
 
 
-    /**
-     * 获取贷款类型
-     */
-    private void getType() {
-        Map<String, String> map = new HashMap<>();
-        map.put("type", "loanType ");
-        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, TYPE);
-    }
 
-    /**
-     * 获取贷款金额
-     */
-    private void getAmount() {
-        Map<String, String> map = new HashMap<>();
-        map.put("type", "loanAmount");
-        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, AMOUNT);
-    }
 
-    /**
-     * 获取贷款期限
-     */
-    private void getPeriod() {
-        Map<String, String> map = new HashMap<>();
-        map.put("type", "loanPeriod");
-        G_api.getInstance().setHandleInterface(this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, PERIOD);
-    }
 
-    /**
-     * 产品搜索
-     * @param sTypeId
-     */
-    private void postProductSearch(String sTypeId) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("period", "");//期限
-        params.put("dateCycle", "");//期限周期
-        params.put("amount", "");//借款金额
-        params.put("loanType",sTypeId);
-        params.put("channelNo", InitDatas.CHANNEL_NO);//渠道类型：ios,android,wechat
-        params.put("appName", InitDatas.APP_NAME);
-        JSONObject jsonObject = new JSONObject(params);
-        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION,jsonObject, REFRESH);
-    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -458,6 +546,5 @@ public class ProductListActivity extends BaseActivity implements G_api.OnResultH
         iv.clearAnimation();
         iv.startAnimation(dismissArrowAnima);
     }
-
 
 }

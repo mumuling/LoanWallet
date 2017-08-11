@@ -75,7 +75,7 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
                 HashMap<String, String> params = new HashMap<>();
                 params.put("phone", sPhone);
                 params.put("channelNo", InitDatas.CHANNEL_NO);
-                params.put("applyArea", InitDatas.sLocation.getLatitude() + "；" + InitDatas.sLocation.getLongitude());
+                params.put("applyArea", InitDatas.latitude + "；" + InitDatas.longitude);
                 params.put("appName", InitDatas.APP_NAME);
                 JSONObject jsonObject = new JSONObject(params);
 
@@ -172,6 +172,7 @@ public class LoginActivity extends BaseActivity implements G_api.OnResultHandler
 
     @Override
     public void onError(int flag) {
-
+             ToastUtils.showToast(me,"请求失败，请稍后再试!");
     }
+
 }

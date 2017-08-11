@@ -5,9 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.TextView;
 
 import com.pingxun.daishangqianbao.R;
@@ -33,6 +30,11 @@ public class F4DialogPopupView extends BasePopupWindow implements View.OnClickLi
         setViewClickListener(this,ok,cancel);
     }
 
+    @Override
+    protected Animation initShowAnimation() {
+        return null;
+    }
+
 
     @Override
     public View onCreatePopupView() {
@@ -44,16 +46,17 @@ public class F4DialogPopupView extends BasePopupWindow implements View.OnClickLi
         return findViewById(R.id.popup_anima);
     }
 
-    @Override
-    protected Animation initShowAnimation() {
-        AnimationSet set=new AnimationSet(false);
-        Animation shakeAnima=new RotateAnimation(0,15,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        shakeAnima.setInterpolator(new CycleInterpolator(5));
-        shakeAnima.setDuration(400);
-        set.addAnimation(getDefaultAlphaAnimation());
-        set.addAnimation(shakeAnima);
-        return set;
-    }
+//    @Override
+//    protected Animation initShowAnimation() {
+//        //摇一摇动画
+//        AnimationSet set=new AnimationSet(false);
+//        Animation shakeAnima=new RotateAnimation(0,15,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+//        shakeAnima.setInterpolator(new CycleInterpolator(5));
+//        shakeAnima.setDuration(400);
+//        set.addAnimation(getDefaultAlphaAnimation());
+//        set.addAnimation(shakeAnima);
+//        return set;
+//    }
 
     @Override
     public View getClickToDismissView() {
@@ -67,7 +70,7 @@ public class F4DialogPopupView extends BasePopupWindow implements View.OnClickLi
                 dismiss();
                 break;
             case R.id.tv_right:
-                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "400-400-8089"));
+                Intent phoneIntent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + "400-862-2287"));
                 getContext().startActivity(phoneIntent);
                 break;
             default:

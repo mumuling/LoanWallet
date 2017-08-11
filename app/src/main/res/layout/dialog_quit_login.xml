@@ -18,7 +18,7 @@
             android:gravity="center"
             android:text="您真的要退出登录吗？"
             android:textColor="@color/black"
-            android:textSize="20sp" />
+            android:textSize="16sp" />
 
         <include layout="@layout/line_vertical_1px_fragment4" />
 

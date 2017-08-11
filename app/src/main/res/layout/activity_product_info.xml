@@ -125,8 +125,8 @@
                         android:layout_below="@+id/tv2"
                         android:layout_marginTop="6dp"
                         android:layout_toRightOf="@+id/iv2"
-                        tools:text="利率说明1231231321321"
-                        android:textColor="@color/black"/>
+                        tools:text="利率说明1231231321321"/>
+
                 </RelativeLayout>
 
 

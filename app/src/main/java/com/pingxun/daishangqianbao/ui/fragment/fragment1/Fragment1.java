@@ -1,6 +1,7 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment1;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.pingxun.daishangqianbao.data.BankListBean;
 import com.pingxun.daishangqianbao.data.BannerBean;
 import com.pingxun.daishangqianbao.data.F1ProductRecommendBean;
 import com.pingxun.daishangqianbao.data.F1ProductTypeBean;
+import com.pingxun.daishangqianbao.meijie.DemoActivity;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
@@ -80,10 +82,11 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     RecyclerView mRv3;//办卡专区
     //  @BindView(R.id.multiple_status_view)
 //  MultipleStatusView mMultipleStatusView;
-    @BindView(R.id.parent_view)
-    LinearLayout mParentView;
+
     @BindView(R.id.empty_layout)
     EmptyLayout mEmptyLayout;
+    @BindView(R.id.parent_view)
+    LinearLayout mParentView;
 
 
 
@@ -93,22 +96,42 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     private List<F1ProductTypeBean.DataBean> mTypeList;
     private List<BankListBean.DataBean> mBankList;
     private List<F1ProductRecommendBean.DataBean> mRecommendList;
-//    private View mSonView;
-
 
     @Override
-    protected int getRootLayoutResID() {
-        return R.layout.fragment_1;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_1);
     }
 
     @Override
-    protected void initData() {
-//        mSonView = LayoutInflater.from(mActivity).inflate(R.layout.error_view, mParentView, false);
+    protected void onInitView(View rootView) {
+        super.onInitView(rootView);
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    protected void onLoadData(Bundle savedInstanceState) {
+        super.onLoadData(savedInstanceState);
         onRefresh();
         initAdapter();
+
     }
+
+
+    //    @Override
+//    protected int getRootLayoutResID() {
+//        return R.layout.fragment_1;
+//    }
+//
+//    @Override
+//    protected void initData() {
+////      mSonView = LayoutInflater.from(mActivity).inflate(R.layout.error_view, mParentView, false);
+//        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
+//        mSwipeLayout.setOnRefreshListener(this);
+//        onRefresh();
+//        initAdapter();
+//    }
 
 
     @OnClick({R.id.rb_dydk, R.id.rb_gxdk, R.id.rb_xydk, R.id.rb_xesd})
@@ -265,7 +288,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     @Override
     public void onError(int flag) {
 //        mParentView.setVisibility(View.GONE);
-        if (NetUtil.getNetWorkState(mActivity)==-1){
+        if (NetUtil.getNetWorkState(mActivity) == -1) {
             mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
         }
     }
@@ -318,7 +341,7 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
         bundle.putString("url", url);
         bundle.putString("productName", name);
         if (url.contains("jie.gomemyf.com")) {
-            ToastUtils.showToast(mActivity, "jie.gomemyf.com");
+            ActivityUtil.goForward(mActivity, DemoActivity.class, bundle, false);
         } else {
             ActivityUtil.goForward(mActivity, WebViewActivity.class, bundle, false);
         }
@@ -405,12 +428,11 @@ public class Fragment1 extends BaseFragment implements G_api.OnResultHandler, BG
     }
 
 
-
-
     @OnClick(R.id.empty_layout)
     public void onViewClicked() {
         mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
         onRefresh();
     }
+
 
 }

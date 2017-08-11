@@ -2,6 +2,7 @@ package com.pingxun.daishangqianbao.ui.activity.common;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.support.v4.app.FragmentTabHost;
 import android.view.KeyEvent;
@@ -20,6 +21,15 @@ import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.utils.AppManager;
 import com.pingxun.daishangqianbao.utils.ArrayUtils;
 import com.pingxun.daishangqianbao.utils.GDlocationUtil;
+import com.yanzhenjie.alertdialog.AlertDialog;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.PermissionNo;
+import com.yanzhenjie.permission.PermissionYes;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
+
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -39,6 +49,8 @@ public class MainActivity extends BaseActivity implements TabHost.OnTabChangeLis
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
             , Manifest.permission.READ_PHONE_STATE, Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO};
 
+
+
     @Override
     protected int getLayoutId() {
         return R.layout.ui_home;
@@ -46,17 +58,58 @@ public class MainActivity extends BaseActivity implements TabHost.OnTabChangeLis
 
     @Override
     protected void initData() {
+        initTabs();
+        AndPermission.with(me)
+                .requestCode(100)
+                .permission(Permission.LOCATION)
+                .rationale(mRationaleListener)
+                .callback(this)
+                .start();
+    }
+
+
+    private RationaleListener mRationaleListener=new RationaleListener() {
+        @Override
+        public void showRequestPermissionRationale(int requestCode, final Rationale rationale) {
+            AlertDialog.newBuilder(me)
+                    .setTitle("提示")
+                    .setMessage("请开启定位权限以向您推荐适合的产品")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            rationale.resume();
+                        }
+                    })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            rationale.cancel();
+                        }
+                    }).show();
+
+        }
+    };
+
+
+    // 成功回调的方法，用注解即可，这里的100就是请求时的requestCode。
+    @PermissionYes(100)
+    private void getPermissionYes(List<String> grantedPermissions) {
+
+//      ToastUtils.showToast(me,"申请权限成功");
         GDlocationUtil.init(getApplication());
         GDlocationUtil.getCurrentLocation(new GDlocationUtil.MyLocationListener() {
             @Override
             public void result(AMapLocation location) {
-                InitDatas.sLocation=location;
+                InitDatas.latitude=location.getLatitude();
+                InitDatas.longitude=location.getLongitude();
             }
         });
-        initTabs();
-//        getAppUpdate();
     }
 
+    @PermissionNo(100)
+    private void getPermissionNo(List<String> deniedPermissions) {
+
+    }
 
 
     @SuppressLint("ObsoleteSdkInt")
@@ -69,14 +122,12 @@ public class MainActivity extends BaseActivity implements TabHost.OnTabChangeLis
         if (ArrayUtils.isEmpty(tabs)) {
             return;
         }
-
         for (MainTab mainTab : tabs) {
             TabHost.TabSpec tabSpec = mTabHost.newTabSpec(getString(mainTab.getResName()));
             @SuppressLint("InflateParams") ViewGroup indicator = (ViewGroup) getLayoutInflater().inflate(R.layout.tab_indicator, null, false);
             TextView title = (TextView) indicator.findViewById(R.id.tab_title);
             title.setText(getString(mainTab.getResName()));
             ImageView icon = (ImageView) indicator.findViewById(R.id.tab_icon);
-           // icon.getHierarchy().setPlaceholderImage(mainTab.getResIcon());
             icon.setImageResource(mainTab.getResIcon());
             tabSpec.setIndicator(indicator);
             tabSpec.setContent(new TabHost.TabContentFactory() {
@@ -139,8 +190,5 @@ public class MainActivity extends BaseActivity implements TabHost.OnTabChangeLis
 //                });
 //
 //    }
-
-
-
 
 }

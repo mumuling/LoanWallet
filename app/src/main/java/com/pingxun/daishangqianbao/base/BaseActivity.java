@@ -164,7 +164,6 @@ public abstract class BaseActivity extends AppCompatActivity{
         if (title != null) {
             title.setText(titleStr);
         }
-
     }
 
 
@@ -176,6 +175,6 @@ public abstract class BaseActivity extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         OkGo.getInstance().cancelTag(this);
-
+        AppManager.finishActivity(me);
     }
 }

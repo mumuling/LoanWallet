@@ -1,5 +1,6 @@
 package com.pingxun.daishangqianbao.ui.activity.other;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseActivity;
 import com.pingxun.daishangqianbao.data.ProductInfoBean;
+import com.pingxun.daishangqianbao.meijie.DemoActivity;
 import com.pingxun.daishangqianbao.other.G_api;
 import com.pingxun.daishangqianbao.other.InitDatas;
 import com.pingxun.daishangqianbao.other.Urls;
@@ -69,6 +71,7 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
     private String sId;//产品ID
     private static final int GET_FIND_BY_ID = 1;//获取产品详情
     private static final int POST_APPLY = 2;//立即申请
+    private final static int REQUESTCODE = 333; // 返回的结果码
 
     private String mWebUrls;
     private String mNameStr;
@@ -139,6 +142,32 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         return newStr;
     }
 
+
+
+
+    @OnClick({R.id.btn_enter, R.id.empty_layout})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_enter://立即申请
+                postPoint();
+                Bundle bundle = new Bundle();
+                bundle.putString("url", mWebUrls);
+                bundle.putString("productName", mNameStr);
+                if (mWebUrls.contains("jie.gomemyf.com")) {
+                    ActivityUtil.goForward(me, DemoActivity.class,REQUESTCODE,bundle);
+                } else {
+                    ActivityUtil.goForward(me, WebViewActivity.class,REQUESTCODE, bundle);
+                }
+
+                break;
+            case R.id.empty_layout://重连
+                mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
+                update();
+                break;
+
+        }
+    }
+
     /**
      * 数据埋点
      */
@@ -151,40 +180,24 @@ public class ProductInfoActivity extends BaseActivity implements G_api.OnResultH
         Map<String, String> params = new HashMap<String, String>();
         params.put("productId", sId);
         params.put("deviceNumber", model + "(" + carrier + ")");
-        params.put("applyArea", InitDatas.sLocation.getLatitude() + "；" + InitDatas.sLocation.getLongitude());
+        params.put("applyArea", InitDatas.latitude + "；" + InitDatas.longitude);
         params.put("channelNo", InitDatas.CHANNEL_NO);
         params.put("appName", InitDatas.APP_NAME);
         JSONObject jsonObj = new JSONObject(params);
         G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_APPLY_LOAN, jsonObj, POST_APPLY);
-
     }
 
 
-    @OnClick({R.id.btn_enter, R.id.empty_layout})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_enter://立即申请
-                postPoint();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUESTCODE) {
                 IsApplyDialogPopupView isApplyDialogPopupViewView = new IsApplyDialogPopupView(me, sId);
                 isApplyDialogPopupViewView.setPopupWindowFullScreen(true);
                 isApplyDialogPopupViewView.showPopupWindow();
-                Bundle bundle = new Bundle();
-                bundle.putString("url", mWebUrls);
-                bundle.putString("productName", mNameStr);
-
-                if (mWebUrls.contains("jie.gomemyf.com")) {
-                    ToastUtils.showToast(me, "jie.gomemyf.com");
-                } else {
-                    ActivityUtil.goForward(me, WebViewActivity.class, bundle, false);
-                }
-                break;
-            case R.id.empty_layout://重连
-                mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
-                update();
-                break;
-
-        }
+            }
     }
+
 
     private void update() {
         Observable.timer(1, TimeUnit.SECONDS)

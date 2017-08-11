@@ -24,14 +24,7 @@ import okhttp3.OkHttpClient;
  * Application基类
  */
 public class App extends Application {
-    public static double longitude; //经度
-    public static double latitude; //纬度
-    public static double speed;   //速度
-    public static double Angle;
-    public static double TowPointlong; //与上一经伟度点间的里程，单位：米
-    public static int GpsAccuracyStatus;//GPS信号强度
-    public static double runlong; //行驶里程，单位：米
-    public static long lastTime;   //最后定位时间
+
     public static int CONNECTION_TIMED_OUT = 10000;//设置连接超时时间
 
     @Override

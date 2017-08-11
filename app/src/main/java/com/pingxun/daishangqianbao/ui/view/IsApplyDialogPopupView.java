@@ -3,9 +3,6 @@ package com.pingxun.daishangqianbao.ui.view;
 import android.app.Activity;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,15 +56,10 @@ public class IsApplyDialogPopupView extends BasePopupWindow implements View.OnCl
         return findViewById(R.id.popup_anima);
     }
 
+
     @Override
     protected Animation initShowAnimation() {
-        AnimationSet set=new AnimationSet(false);
-        Animation shakeAnima=new RotateAnimation(0,15,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        shakeAnima.setInterpolator(new CycleInterpolator(5));
-        shakeAnima.setDuration(400);
-        set.addAnimation(getDefaultAlphaAnimation());
-        set.addAnimation(shakeAnima);
-        return set;
+        return null;
     }
 
     @Override

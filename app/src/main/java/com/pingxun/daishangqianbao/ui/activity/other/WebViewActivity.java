@@ -6,6 +6,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.base.BaseActivity;
@@ -24,7 +25,8 @@ public class WebViewActivity extends BaseActivity {
     ProgressBar mProgressBar;
     @BindView(R.id.webView)
     BaseWebView mWebView;
-
+    @BindView(R.id.iv_topview_back)
+    RelativeLayout mIvTopviewBack;
 
 
     @Override
@@ -70,5 +72,4 @@ public class WebViewActivity extends BaseActivity {
         }
 
     }
-
 }

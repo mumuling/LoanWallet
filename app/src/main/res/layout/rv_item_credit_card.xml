@@ -53,7 +53,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="4dp"
-        android:text="申请贷款"
+        android:text="立即申请"
         android:layout_marginRight="10dp"
         android:textColor="@color/tab_font_bright"
         android:textSize="12sp"/>

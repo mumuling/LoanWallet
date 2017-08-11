@@ -27,6 +27,8 @@ public class ApplyListRecyclerViewAdapter extends BaseQuickAdapter<ApplyListBean
 
     }
 
+
+
     @Override
     protected void convert(BaseViewHolder helper, ApplyListBean.DataBean.ContentBean item) {
           helper.setText(R.id.tv_title,item.getProductName());

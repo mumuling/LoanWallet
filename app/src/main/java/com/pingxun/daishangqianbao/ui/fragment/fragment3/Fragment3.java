@@ -1,17 +1,18 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment3;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemChildClickListener;
-import com.orhanobut.logger.Logger;
 import com.pingxun.daishangqianbao.R;
 import com.pingxun.daishangqianbao.adapter.F3_Bank_RecyclerViewAdapter;
 import com.pingxun.daishangqianbao.adapter.F3_Card_RecyclerViewAdapter;
@@ -45,7 +46,7 @@ import rx.functions.Action1;
  * 信用卡Fragment
  */
 
-public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, G_api.OnResultHandler {
+public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, G_api.OnResultHandler,BaseQuickAdapter.RequestLoadMoreListener  {
     @BindView(R.id.tv_topview_title)
     TextView mTvTopviewTitle;
     @BindView(R.id.rv1)
@@ -63,34 +64,68 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
     private F3_Bank_RecyclerViewAdapter mBankAdapter;//银行Adapter;
     private F3_Card_RecyclerViewAdapter mCardAdapter;//信用卡Adapter;
     private static final int GET_BANK = 1;
-    private static final int GET_CARD = 2;
+
     private static final int APPLY = 3;
+    private int TOTAL_COUNTER;//总数
+    private static final int REFRESH = 5;//下拉刷新标识
+    private static final int LOADMORE = 2;//上拉加载标识
+    private int page_size = 10;//每一次请求加载的条数
+    private int mCurrentCounter = 0;//上一次加载的个数
+    private View notDataView;//无数据View
+    private View errorView;//网络异常View
+    private int page=1;
 
     private List<BankListBean.DataBean> mBankList;
     private List<F3CardListBean.DataBean.ContentBean> mCardList;
 
+    private F3CardListBean mCardBean;
 
     @Override
-    protected int getRootLayoutResID() {
-        return R.layout.fragment_3;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_3);
     }
 
     @Override
-    protected void initData() {
+    protected void onInitView(View rootView) {
+        super.onInitView(rootView);
         mTvTopviewTitle.setText("信用卡");
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
+    }
+
+    @Override
+    protected void onLoadData(Bundle savedInstanceState) {
+        super.onLoadData(savedInstanceState);
         initAdapter();
         onRefresh();
     }
+
+    //    @Override
+//    protected int getRootLayoutResID() {
+//        return R.layout.fragment_3;
+//    }
+//
+//    @Override
+//    protected void initData() {
+//        mTvTopviewTitle.setText("信用卡");
+//        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
+//        mSwipeLayout.setOnRefreshListener(this);
+//        initAdapter();
+//        onRefresh();
+//    }
 
     /**
      * 初始化adapter
      */
     private void initAdapter() {
+        notDataView = mActivity.getLayoutInflater().inflate(R.layout.empty_view, (ViewGroup) mRv2.getParent(), false);
+        errorView = mActivity.getLayoutInflater().inflate(R.layout.error_view, (ViewGroup) mRv2.getParent(), false);
+
         mBankAdapter = new F3_Bank_RecyclerViewAdapter(R.layout.rv_item_bank, mBankList);
         mCardAdapter = new F3_Card_RecyclerViewAdapter(R.layout.rv_item_credit_card, mCardList);
-        // mBankAdapter.openLoadAnimation(BaseQuickAdapter.SLIDEIN_LEFT);
+        mCardAdapter.setOnLoadMoreListener(this, mRv2);
+
         mRv1.setHasFixedSize(true);
         mRv1.setLayoutManager(new GridLayoutManager(getContext(), 3));
         mRv1.setAdapter(mBankAdapter);
@@ -124,6 +159,20 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
                 JSONObject jsonObject = new JSONObject(params);
                 G_api.getInstance().setHandleInterface(Fragment3.this).upJson(Urls.URL_POST_APPLY_CREDIT_CARD, jsonObject, APPLY);
                 goWebView(mCardList.get(position).getUrl(), mCardList.get(position).getName());
+            }
+        });
+
+        errorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onRefresh();
+            }
+        });
+
+        notDataView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
             }
         });
     }
@@ -164,20 +213,39 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
                     }else {
                         mBankAdapter.setNewData(mBankList);
                     }
-
                 }
                 break;
-            case GET_CARD://获取推荐信用卡回调
-                Logger.json(jsonStr);
-                F3CardListBean mCardBean = Convert.fromJson(jsonStr, F3CardListBean.class);
+            case REFRESH://下拉刷新
+
+                mCardBean = Convert.fromJson(jsonStr, F3CardListBean.class);
                 if (mCardBean == null || !mCardBean.isSuccess()) {
                     ToastUtils.showToast(mActivity, "获取信用卡列表失败");
+                    mCardAdapter.setNewData(null);
+                    mCardAdapter.setEmptyView(errorView);
                     return;
                 }
                 if (mCardBean.isSuccess()) {
+                    TOTAL_COUNTER = mCardBean.getData().getTotalElements();
                     mCardList = mCardBean.getData().getContent();
-                    mCardAdapter.setNewData(mCardList);
+                    if (mCardList.size()==0){
+                        mCardAdapter.setNewData(null);
+                        mCardAdapter.setEmptyView(notDataView);
+                    }else {
+                        mCardAdapter.setNewData(mCardList);
+                        mCardAdapter.disableLoadMoreIfNotFullPage();
+                        mCurrentCounter = mCardAdapter.getData().size();
+                    }
                 }
+
+                break;
+
+            case LOADMORE://上拉加载
+                mCardAdapter.loadMoreComplete();
+                mCardBean = Convert.fromJson(jsonStr, F3CardListBean.class);
+                List<F3CardListBean.DataBean.ContentBean> mListMore;
+                mListMore = mCardBean.getData().getContent();
+                mCardAdapter.addData(mListMore);
+                mCurrentCounter = mCardAdapter.getData().size();
                 break;
 
             case APPLY:
@@ -206,12 +274,42 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
                     @Override
                     public void call(Long aLong) {
                         getBank();
-                        getCard();
+                        page=1;
+                        getCard(page,REFRESH);
                         mSwipeLayout.setRefreshing(false);
                     }
                 });
     }
 
+    /**
+     * 上拉加载回调
+     */
+    @Override
+    public void onLoadMoreRequested() {
+        if (mCurrentCounter < page_size) {
+           mCardAdapter.loadMoreEnd(true);
+        } else {
+            if (mCurrentCounter>=TOTAL_COUNTER){
+                mCardAdapter.loadMoreEnd(false);
+            }else {
+                if (NetUtil.getNetWorkState(mActivity)!=-1){
+                    Observable.timer(1, TimeUnit.SECONDS)
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<Long>() {
+                                @Override
+                                public void call(Long aLong) {
+                                    page++;
+                                    getCard(page,LOADMORE);
+                                }
+                            });
+
+                }else {
+                    ToastUtils.showToast(mActivity,"网络连接异常!");
+                    mCardAdapter.loadMoreFail();
+                }
+            }
+        }
+    }
 
     /**
      * 获取所有银行
@@ -224,12 +322,14 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
 
     /**
      * 获取推荐信用卡
+     * @param page 页码
+     * @param state 下拉刷新或者上拉加载
      */
-    private void getCard() {
+    private void getCard(int page, int state) {
         HashMap<String, String> params = new HashMap<>();
-        params.put("pageNo", "1");
+        params.put("pageNo", page+"");
         JSONObject jsonObject = new JSONObject(params);
-        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION_CARD, jsonObject, GET_CARD);
+        G_api.getInstance().setHandleInterface(this).upJson(Urls.URL_POST_FIND_BY_CONDITION_CARD, jsonObject, state);
 
     }
 
@@ -238,8 +338,10 @@ public class Fragment3 extends BaseFragment implements SwipeRefreshLayout.OnRefr
      * 点击事件
      */
     @OnClick(R.id.empty_layout)
-    public void onViewClicked() {
+    public void onViewClicked(){
         mEmptyLayout.setErrorType(EmptyLayout.NETWORK_LOADING);
         onRefresh();
     }
+
+
 }

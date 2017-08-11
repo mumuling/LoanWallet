@@ -1,13 +1,15 @@
 package com.pingxun.daishangqianbao.ui.fragment.fragment2;
 
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -46,7 +48,7 @@ import rx.functions.Action1;
  * 精准主页
  */
 
-public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,SwipeRefreshLayout.OnRefreshListener {
+public class Fragment2 extends BaseFragment implements G_api.OnResultHandler, SwipeRefreshLayout.OnRefreshListener {
 
 
     @BindView(R.id.tv_total_money)
@@ -78,6 +80,8 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
     SwipeRefreshLayout mSwipeLayout;
     @BindView(R.id.empty_layout)
     EmptyLayout mEmptyLayout;
+    @BindView(R.id.homePageContentScroll)
+    ScrollView mHomePageContentScroll;
 
 
 
@@ -92,21 +96,41 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
 
     private OptionsPickerView optionsPickerView;
 
-
     @Override
-    protected int getRootLayoutResID() {
-        return R.layout.fragment_2;
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.fragment_2);
     }
 
     @Override
-    protected void initData() {
+    protected void onInitView(View rootView) {
+        super.onInitView(rootView);
         mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
         mSwipeLayout.setOnRefreshListener(this);
         rulerView.setValue(13000.0f, 0.0f, 200000.0f, 1000.0f);//设置选中值、最小值、最大值、单位值
+    }
+
+    @Override
+    protected void onLoadData(Bundle savedInstanceState) {
+        super.onLoadData(savedInstanceState);
         onRefresh();
     }
 
-    @OnClick({R.id.btn_day_or_month, R.id.lin_job_choose, R.id.btn_search,R.id.empty_layout})
+    //    @Override
+//    protected int getRootLayoutResID() {
+//        return R.layout.fragment_2;
+//    }
+//
+//    @Override
+//    protected void initData() {
+//        mSwipeLayout.setColorSchemeResources(R.color.tab_font_bright);
+//        mSwipeLayout.setOnRefreshListener(this);
+//        rulerView.setValue(13000.0f, 0.0f, 200000.0f, 1000.0f);//设置选中值、最小值、最大值、单位值
+//
+//        onRefresh();
+//    }
+
+    @OnClick({R.id.btn_day_or_month, R.id.lin_job_choose, R.id.btn_search, R.id.empty_layout})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_day_or_month://切换还款单位
@@ -135,9 +159,10 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
                 optionsPickerView.show();
                 break;
             case R.id.btn_search://搜索
-                Log.e("期限==>>", InitDatas.loanDate + "");
-                Log.e("期限周期==>>", cycleStr);
-                Log.e("借款金额==>>", InitDatas.loanAmount + "");
+
+//              Log.e("期限==>>", InitDatas.loanDate + "");
+//              Log.e("期限周期==>>", cycleStr);
+//              Log.e("借款金额==>>", InitDatas.loanAmount + "");
 
 //              HashMap<String, String> params = new HashMap<>();
 //              params.put("period", InitDatas.loanDate+"");//期限
@@ -154,8 +179,6 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
                 break;
         }
     }
-
-
 
 
     @Override
@@ -221,7 +244,7 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
 
     @Override
     public void onError(int flag) {
-        if (NetUtil.getNetWorkState(mActivity)==-1){
+        if (NetUtil.getNetWorkState(mActivity) == -1) {
             mEmptyLayout.setErrorType(EmptyLayout.NETWORK_ERROR);
         }
     }
@@ -243,7 +266,8 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
         rulerView.setOnValueChangeListener(new RulerView.OnValueChangeListener() {
             @Override
             public void onValueChange(float value) {
-                tvTotalMoney.setText("￥ " + (int) value + "");
+//              mHomePageContentScroll.requestDisallowInterceptTouchEvent(true);
+                tvTotalMoney.setText("¥ " + (int) value + "");
                 InitDatas.loanAmount = (int) value;
                 calculateRepayInfo(InitDatas.progressData);
             }
@@ -352,7 +376,7 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
                         getParameter();
                         getJobData();
                         btnDayOrMonth.setBackgroundResource(R.mipmap.icon_date_day);
-                        InitDatas.loanUnit=0;
+                        InitDatas.loanUnit = 0;
                         seekBar.setProgress(0);
                         runinUI(0);
                         mSwipeLayout.setRefreshing(false);
@@ -368,13 +392,15 @@ public class Fragment2 extends BaseFragment implements G_api.OnResultHandler,Swi
     private void getJobData() {
         Map<String, String> map = new HashMap<>();
         map.put("type", "job");
-        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_BY_TYPE,map, URL_GET_FIND_BY_TYPE);
+        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_BY_TYPE, map, URL_GET_FIND_BY_TYPE);
     }
 
     /**
      * 获取贷款参数
      */
     private void getParameter() {
-        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_PARAMETER,null, URL_GET_FIND_PARAMETER);
+        G_api.getInstance().setHandleInterface(Fragment2.this).getRequest(Urls.URL_GET_FIND_PARAMETER, null, URL_GET_FIND_PARAMETER);
     }
+
+
 }

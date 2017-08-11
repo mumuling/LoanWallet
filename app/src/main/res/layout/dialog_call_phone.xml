@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:gravity="center"
-            android:text="400-400-8089"
+            android:text="400-862-2287"
             android:textColor="@color/black"
             android:textSize="22sp" />
 

@@ -3,9 +3,6 @@ package com.pingxun.daishangqianbao.ui.view;
 import android.app.Activity;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.TextView;
 
 import com.pingxun.daishangqianbao.R;
@@ -36,6 +33,11 @@ public class F4QuitDialogPopupView extends BasePopupWindow implements View.OnCli
         setViewClickListener(this,ok,cancel);
     }
 
+    @Override
+    protected Animation initShowAnimation() {
+        return null;
+    }
+
 
     @Override
     public View onCreatePopupView() {
@@ -46,17 +48,20 @@ public class F4QuitDialogPopupView extends BasePopupWindow implements View.OnCli
     public View initAnimaView() {
         return findViewById(R.id.popup_anima);
     }
+//
+//    @Override
+//    protected Animation initShowAnimation() {
+//        AnimationSet set=new AnimationSet(false);
+//        Animation shakeAnima=new RotateAnimation(0,15,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+//        shakeAnima.setInterpolator(new CycleInterpolator(5));
+//        shakeAnima.setDuration(400);
+//        set.addAnimation(getDefaultAlphaAnimation());
+//        set.addAnimation(shakeAnima);
+//        return set;
+//    }
 
-    @Override
-    protected Animation initShowAnimation() {
-        AnimationSet set=new AnimationSet(false);
-        Animation shakeAnima=new RotateAnimation(0,15,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
-        shakeAnima.setInterpolator(new CycleInterpolator(5));
-        shakeAnima.setDuration(400);
-        set.addAnimation(getDefaultAlphaAnimation());
-        set.addAnimation(shakeAnima);
-        return set;
-    }
+
+
 
     @Override
     public View getClickToDismissView() {
